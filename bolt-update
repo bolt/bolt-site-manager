@@ -1,0 +1,20 @@
+#!/bin/bash
+
+source $(dirname $BASH_SOURCE)/bolt-functions
+
+# Check that there is a .webroot file in the parent directory
+check_webroot_parent
+
+if [ ! -f composer.json ] ; then
+    echo "No composer.json file found. Are you sure you're in the correct directory?" >&2
+    exit 1
+fi
+
+git pull
+
+# Install a working Nut
+go_nuts
+
+# Do a Composer install for relevant directories
+composer_install
+
