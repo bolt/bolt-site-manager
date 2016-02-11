@@ -1,0 +1,57 @@
+#!/bin/bash
+
+SELF=$(basename $BASH_SOURCE)
+source $(dirname $BASH_SOURCE)/bolt-functions
+
+function usage {
+    echo "" >&2
+    echo "    $SELF [git url] [target directory name]" >&2
+    echo "" >&2
+}
+
+# Check that there is a .webroot file in *THIS* directory
+check_webroot
+
+if [ "$1" = "" ] ; then
+    echo "You must give a git repository URL" >&2
+    usage
+    exit 1
+fi
+
+if [ "$2" = "" ] ; then
+    echo "You must give a target directory" >&2
+    usage
+    exit 1
+fi
+
+# Do the clone into the custom directory
+git clone $1 $2 
+
+if [ $? -ne 0 ] ; then
+    echo "Clone failed… Exiting!" >&2
+    exit 1
+fi
+
+cd $2
+
+# Make directories
+if [ ! -d "app/database/" ] ; then
+    mkdir app/database/ 
+fi
+if [ ! -d "app/cache/" ] ; then
+    mkdir app/cache/ 
+fi
+
+if [ "$3" != "" ] ; then
+    git checkout $3
+fi
+
+# Install a working Nut
+go_nuts
+
+# Do a Composer install for relevant directories
+composer_install
+
+# Set correct permissions
+permissions_set
+
