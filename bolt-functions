@@ -1,0 +1,102 @@
+#!/bin/bash
+
+# Executables
+SUDO="/usr/bin/sudo"
+XARGS="/usr/bin/xargs"
+CHMOD="/bin/chmod"
+CHGRP="/bin/chgrp"
+
+# Permissions
+PERM_DIR=775
+PERM_FILE=664
+GROUP_WEB="www-data"
+
+################################################################################
+# Set-up a valid Nut file
+################################################################################
+function go_nuts {
+    if [ ! -f ./app/nut ] ; then
+        $SUDO echo "#!/usr/bin/env php" >> ./app/nut
+        $SUDO echo "<?php" >> ./app/nut
+        $SUDO echo "require_once dirname(__DIR__) . '/vendor/autoload.php';" >> ./app/nut
+        $SUDO echo "\$config = new \Bolt\Configuration\Composer(dirname(__DIR__));" >> ./app/nut
+        $SUDO echo "\$app = new \Bolt\Application(['resources' => $config]);" >> ./app/nut
+        $SUDO echo "\$app['resources']->setPath('web', 'public');" >> ./app/nut
+        $SUDO echo "\$app['resources']->setPath('themebase', 'web/public/theme');" >> ./app/nut
+        $SUDO echo "\$app->initialize();" >> ./app/nut
+        $SUDO echo "\$app['nut']->run();" >> ./app/nut
+
+        $SUDO $CHMOD +x ./app/nut
+    fi
+}
+
+################################################################################
+# Composer installs
+################################################################################
+function composer_install {
+    $SUDO composer install --no-dev
+    ./app/nut extensions:setup
+    cd extensions/
+    $SUDO composer install --no-dev
+    cd ..
+}
+
+################################################################################
+# Set valid file system permissions
+################################################################################
+function permissions_set {
+    if [ -d "public/" ] ; then
+        # Composer install
+        for d in app/cache/ app/config/ app/database/ extensions/ public/; do
+            permissions_set_helper $d
+        done
+    else
+        for d in app/cache/ app/config/ app/database/ extensions/ files/ thumbs/ ; do
+            permissions_set_helper $d
+        done
+    fi
+}
+
+function permissions_set_helper() {
+    echo "Setting up permissions for $1 directory:"
+    echo "    - directory, and subdirectories, UNIX group to $GROUP_WEB…"
+    $SUDO $CHGRP -R $GROUP_WEB $1
+    if [ -n "$(find $1 -type f -prune -empty)" ] ; then
+        echo "    - files in $1  to 644…"
+        find $1 -type f -print0 | $SUDO $XARGS -0 $CHMOD $PERM_FILE
+    fi
+    echo "    - directories to $PERM_DIR…"
+    find $1 -type d -print0 | $SUDO $XARGS -0 $CHMOD $PERM_DIR
+    echo "    - sticky bit on directories in $1"
+    find $1 -type d -print0 | $SUDO $XARGS -0 $CHMOD g+s
+}
+
+################################################################################
+# Check for a .webroot file in the CURRENT directory
+################################################################################
+function check_webroot {
+    if [ ! -f .webroot ] ; then
+        webroot_not_found
+    fi
+}
+
+################################################################################
+# Check for a .webroot file in the PARENT directory
+################################################################################
+function check_webroot_parent {
+    if [ ! -f ../.webroot ] ; then
+        webroot_not_found
+    fi
+}
+
+################################################################################
+# Report a .webroot file not-found and exit
+################################################################################
+function webroot_not_found {
+    echo "Did not find hidden .webroot file." >&2
+    echo "    * You are not in the correct directory, or" >&2
+    echo "    * Your home directory is not yet set up!" >&2
+    echo "" >&2
+    exit 1
+}
+
