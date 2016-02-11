@@ -1,0 +1,72 @@
+#!/bin/bash
+
+SELF=$(basename $BASH_SOURCE) 
+source $(dirname $BASH_SOURCE)/bolt-functions
+
+# Define the first parameter as the project directory
+PROJECT_DIR=$1
+# Directories we need to exist
+REQ_DIRS="files \
+    public/bolt-public/view \
+    public/theme \
+    public/files \
+    public/thumbs \
+    public/extensions \
+    app/cache \
+    app/database \
+    app/config \
+    extensions"
+
+# Display basic usage of the script
+function usage {
+    echo "" >&2
+    echo "    $SELF [target directory name]" >&2
+    echo "" >&2
+}
+
+# Check that there is a .webroot file in *THIS* directory
+check_webroot
+
+# Check that we were passed a vaid project directory name
+if [ "$PROJECT_DIR" = "" ] ; then
+    echo "You must give a target directory" >&2
+    usage
+    exit 1
+fi
+
+# Create the new project
+git clone git@gitlab.com:twokings/bolt-composer-install.git $PROJECT_DIR
+cd $PROJECT_DIR
+rm .git/ -rf
+if [ $? -ne 0 ] ; then
+    echo "Problem removing git directory. ABORTING!"
+    exit 1
+fi
+git init
+
+# Set up needed directories
+for dir in $REQ_DIRS ; do
+    if [ ! -d $dir ] ; then
+        mkdir -p $dir
+    fi
+done
+
+# Rename project in composer.json
+perl -p -i -e "s/twokings\/bolt\-install/twokings\/$PROJECT_DIR\-install/" composer.json
+
+# Commit the initial composer.json
+git add composer.json
+git commit composer.json -m "Initial commit for $PROJECT_DIR"
+
+# Do a Composer install for relevant directories
+composer_install
+
+# Set correct permissions
+permissions_set
+
+# Advise on git status
+echo "--------------------------------------------------------------------------------"
+echo "Project set up and git is now:"
+echo "--------------------------------------------------------------------------------"
+git status
+
