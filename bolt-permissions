@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source $(dirname $BASH_SOURCE)/bolt-functions
+
+# Check that there is a .webroot file in the parent directory
+check_webroot_parent
+
+if [ ! -d "app/cache/" ] ; then
+    echo "Does not look like a Bolt root directory" >&2
+    exit 1
+fi
+
+# Set correct permissions
+permissions_set
+
