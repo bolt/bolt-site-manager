@@ -35,7 +35,7 @@ function go_nuts {
 ################################################################################
 function composer_install {
     $SUDO composer install --no-dev
-    ./app/nut extensions:setup
+    $SUDO ./app/nut extensions:setup
     cd extensions/
     $SUDO composer install --no-dev
     cd ..
