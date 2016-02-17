@@ -11,10 +11,27 @@ PERM_DIR=775
 PERM_FILE=664
 GROUP_WEB="www-data"
 
+# Working directory
+WORKDIR=$(pwd)
+
+################################################################################
+# Git functions
+################################################################################
+function update_git {
+    cd $WORKDIR
+    git pull
+
+    if [ $? -ne 0 ] ; then
+        echo -e "\e[97m\e[41m\n\n    A GIT PROBLEM EXISTS\n\nAborting\n\e[39m\e[49m\n"
+        exit 1
+    fi
+}
+
 ################################################################################
 # Set-up a valid Nut file
 ################################################################################
 function go_nuts {
+    cd $WORKDIR
     if [ ! -f ./app/nut ] ; then
         $SUDO echo "#!/usr/bin/env php" >> ./app/nut
         $SUDO echo "<?php" >> ./app/nut
@@ -34,6 +51,7 @@ function go_nuts {
 # Composer installs
 ################################################################################
 function composer_install {
+    cd $WORKDIR
     $SUDO composer install --no-dev
     $SUDO ./app/nut extensions:setup
     cd extensions/
@@ -45,6 +63,7 @@ function composer_install {
 # Set valid file system permissions
 ################################################################################
 function permissions_set {
+    cd $WORKDIR
     if [ -d "public/" ] ; then
         # Composer install
         for d in app/cache/ app/config/ app/database/ extensions/ public/; do
@@ -55,6 +74,8 @@ function permissions_set {
             permissions_set_helper $d
         done
     fi
+    umask_set_helper
+    owner_set_helper
 }
 
 function permissions_set_helper() {
@@ -71,6 +92,21 @@ function permissions_set_helper() {
     find $1 -type d -print0 | $SUDO $XARGS -0 $CHMOD g+s
 }
 
+function owner_set_helper() {
+    cd $WORKDIR
+    if [ $OWNER != "" ] ; then
+        echo "Setting directory owner to $OWNER"
+        sudo chown -R $OWNER $WORKDIR
+    fi
+}
+
+function umask_set_helper() {
+    echo "Setting umask on cache"
+    cd $WORKDIR/app/cache/
+    umask u+w,g+w,o+w
+    cd $WORKDIR
+}
+
 ################################################################################
 # Check for a .webroot file in the CURRENT directory
 ################################################################################
@@ -78,6 +114,7 @@ function check_webroot {
     if [ ! -f .webroot ] ; then
         webroot_not_found
     fi
+    source .webroot
 }
 
 ################################################################################
@@ -87,6 +124,7 @@ function check_webroot_parent {
     if [ ! -f ../.webroot ] ; then
         webroot_not_found
     fi
+    source ../.webroot
 }
 
 ################################################################################
@@ -99,4 +137,3 @@ function webroot_not_found {
     echo "" >&2
     exit 1
 }
-

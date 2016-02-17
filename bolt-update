@@ -13,7 +13,11 @@ fi
 # Set correct permissions
 permissions_set
 
-git pull
+# Pull from origin
+update_git
+
+# Force assets to be rebuilt
+sudo rm -f app/cache/.version
 
 # Install a working Nut
 go_nuts
@@ -21,3 +25,5 @@ go_nuts
 # Do a Composer install for relevant directories
 composer_install
 
+# Set correct permissions
+permissions_set
