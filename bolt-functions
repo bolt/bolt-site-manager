@@ -14,6 +14,9 @@ GROUP_WEB="www-data"
 # Working directory
 WORKDIR=$(pwd)
 
+export COMPOSER_DISABLE_XDEBUG_WARN=1
+export COMPOSER_ALLOW_SUPERUSER=1
+
 ################################################################################
 # Called options
 ################################################################################
