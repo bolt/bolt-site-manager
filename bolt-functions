@@ -75,17 +75,18 @@ function go_nuts {
     if [ ! -f ./app/nut ] ; then
         $SUDO echo "#!/usr/bin/env php" >> ./app/nut
         $SUDO echo "<?php" >> ./app/nut
-        $SUDO echo "require_once dirname(__DIR__) . '/vendor/autoload.php';" >> ./app/nut
-        $SUDO echo "\$config = new \Bolt\Configuration\Composer(dirname(__DIR__));" >> ./app/nut
-        $SUDO echo "\$app = new \Bolt\Application(['resources' => $config]);" >> ./app/nut
-        $SUDO echo "\$app['resources']->setPath('web', 'public');" >> ./app/nut
-        $SUDO echo "\$app['resources']->setPath('themebase', 'web/public/theme');" >> ./app/nut
-        $SUDO echo "\$app->initialize();" >> ./app/nut
-        $SUDO echo "\$app['nut']->run();" >> ./app/nut
+        $SUDO echo "\$app = require __DIR__ . '/bootstrap.php';" >> ./app/nut
+        $SUDO echo "/** @var \Symfony\Component\Console\Application $nut Nut Console Application */" >> ./app/nut
+        $SUDO echo "\$nut = \$app['nut'];" >> ./app/nut
+        $SUDO echo "\$nut->run();" >> ./app/nut
 
         $SUDO $CHMOD +x ./app/nut
     fi
 }
+
+
+
+
 
 ################################################################################
 # Composer installs
