@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Executables
 SUDO="/usr/bin/sudo"

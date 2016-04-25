@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-SELF=$(basename $BASH_SOURCE) 
+SELF=$(basename $BASH_SOURCE)
 source $(dirname $BASH_SOURCE)/bolt-functions
 
 # Define the first parameter as the project directory
