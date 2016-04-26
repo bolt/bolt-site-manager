@@ -1,0 +1,67 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * Based heavily on Composer's bin/composer and src/bootstrap.php files.
+ */
+
+if (PHP_SAPI !== 'cli') {
+    echo sprintf('Error: %s can only be invoked via the CLI version of PHP, not the %s SAPI.%s', basename(__FILE__), PHP_SAPI, PHP_EOL);
+    exit(1);
+}
+
+function includeIfExists($file)
+{
+    return file_exists($file) ? include $file : false;
+}
+
+$getLoader = function () {
+        if ((!$loader = includeIfExists(__DIR__ . '/../vendor/autoload.php'))
+        && (!$loader = includeIfExists(__DIR__ . '/../../../autoload.php'))
+    ) {
+        echo 'You must set up the project dependencies!'.PHP_EOL;
+        exit(1);
+    }
+
+    return $loader;
+};
+$getLoader();
+
+use Bolt\Deploy\Console\Application;
+use Bolt\Deploy\Command\DeployCommand;
+
+error_reporting(-1);
+
+if (function_exists('ini_set')) {
+    @ini_set('display_errors', 1);
+
+    $memoryInBytes = function ($value) {
+        $unit = strtolower(substr($value, -1, 1));
+        $value = (int) $value;
+        switch($unit) {
+            case 'g':
+                $value *= 1024;
+            // no break (cumulative multiplier)
+            case 'm':
+                $value *= 1024;
+            // no break (cumulative multiplier)
+            case 'k':
+                $value *= 1024;
+        }
+
+        return $value;
+    };
+
+    $memoryLimit = trim(ini_get('memory_limit'));
+    // Increase memory_limit if it is lower than 1GB
+    if ($memoryLimit != -1 && $memoryInBytes($memoryLimit) < 1024 * 1024 * 1024) {
+        @ini_set('memory_limit', '1G');
+    }
+    unset($memoryInBytes, $memoryLimit);
+}
+
+$command = new DeployCommand();
+$application = new Application();
+$application->add($command);
+$application->setDefaultCommand($command->getName());
+$application->run();

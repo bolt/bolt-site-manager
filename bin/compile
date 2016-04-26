@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+/*
+ * Based heavily on Composer bin/compile file.
+ */
+
+$cwd = getcwd();
+chdir(__DIR__.'/../');
+$ts = rtrim(shell_exec('git log -n1 --pretty=%ct HEAD'));
+if (!is_numeric($ts)) {
+    echo 'Could not detect date using "git log -n1 --pretty=%ct HEAD"'.PHP_EOL;
+    exit(1);
+}
+// Install with the current version to force it having the right ClassLoader version
+// Install without dev packages to clean up the included classmap from phpunit classes
+shell_exec('composer config -q autoloader-suffix ComposerPhar' . $ts);
+shell_exec('composer install -q --no-dev');
+shell_exec('composer config -q autoloader-suffix --unset');
+chdir($cwd);
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Bolt\Deploy\Compiler;
+
+error_reporting(-1);
+ini_set('display_errors', 1);
+
+try {
+    $compiler = new Compiler();
+    $compiler->compile();
+} catch (\Exception $e) {
+    $shortPath = function ($str) { return str_replace(dirname(__DIR__) . '/', '', $str); };
+    echo sprintf('Failed to compile PHAR: [%s] %s at %s:%s', get_class($e), $e->getMessage(), $shortPath($e->getFile()), $e->getLine());
+    echo sprintf('%s%s%s%s', PHP_EOL, PHP_EOL, $shortPath($e->getTraceAsString()), PHP_EOL);
+
+    exit(1);
+}
