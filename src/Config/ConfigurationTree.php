@@ -13,6 +13,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class ConfigurationTree implements ConfigurationInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
@@ -29,20 +32,39 @@ class ConfigurationTree implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('sites')
-                    ->prototype('array')
-                        ->children()
-                            ->scalarNode('path')->end()
-                            ->booleanNode('backup')
-                                ->info('When true, backup the site prior to applying the deployment changes.')
-                                ->defaultTrue()
-                            ->end()
-                        ->end()
+            ->end()
+            ->append($this->addSitesNode())
+        ;
+
+        return $treeBuilder;
+    }
+
+    /**
+     * Sites configuration node.
+     *
+     * @return ArrayNodeDefinition
+     */
+    protected function addSitesNode()
+    {
+        $builder = new TreeBuilder();
+        /** @var ArrayNodeDefinition $node */
+        $node = $builder->root('sites');
+
+        $node
+            ->isRequired()
+            ->requiresAtLeastOneElement()
+            ->useAttributeAsKey('name')
+            ->prototype('array')
+                ->children()
+                    ->scalarNode('path')->end()
+                        ->booleanNode('backup')
+                        ->info('When true, backup the site prior to applying the deployment changes.')
+                        ->defaultTrue()
                     ->end()
                 ->end()
             ->end()
         ;
 
-        return $treeBuilder;
+        return $node;
     }
 }
