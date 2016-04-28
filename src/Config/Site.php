@@ -11,8 +11,8 @@ class Site
 {
     /** @var string */
     protected $name;
-    /** @var string */
-    protected $path;
+    /** @var array */
+    protected $paths;
     /** @var boolean */
     protected $backup;
 
@@ -25,7 +25,7 @@ class Site
     public function __construct($name, $siteConfig)
     {
         $this->name = $name;
-        $this->path = $siteConfig['path'];
+        $this->paths = $siteConfig['paths'];
         $this->backup = $siteConfig['backup'];
     }
 
@@ -50,21 +50,31 @@ class Site
     }
 
     /**
+     * @param string $path
+     *
      * @return string
      */
-    public function getPath()
+    public function getPath($path)
     {
-        return $this->path;
+        return $this->paths[$path];
     }
 
     /**
-     * @param string $path
+     * @return array
+     */
+    public function getPaths()
+    {
+        return $this->paths;
+    }
+
+    /**
+     * @param array $paths
      *
      * @return Site
      */
-    public function setPath($path)
+    public function setPaths(array $paths)
     {
-        $this->path = $path;
+        $this->paths = $paths;
 
         return $this;
     }
