@@ -29,7 +29,7 @@ class DeployCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = $this->loadConfiguration();
+        $config = $this->loadConfiguration($output);
         $siteName = $input->getArgument('name');
 
         if ($config->getSite($siteName) === null) {

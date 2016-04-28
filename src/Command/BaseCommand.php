@@ -12,6 +12,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command class.
@@ -27,7 +28,7 @@ abstract class BaseCommand extends Command
      *
      * @return Config
      */
-    protected function loadConfiguration(array $configDirectories = null)
+    protected function loadConfiguration(OutputInterface $output, array $configDirectories = null)
     {
         if ($configDirectories === null) {
             $configDirectories = [getcwd()];
@@ -49,8 +50,8 @@ abstract class BaseCommand extends Command
                 'root' => $delegatingLoader->load($configDirectories[0] . '/config.yml')
             ];
         } catch (FileLoaderLoadException $e) {
-
-            die($e->getMessage());
+            $output->writeln(sprintf('<error>%s</error>', stripslashes($e->getMessage())));
+            die();
         }
 
         try {
@@ -61,7 +62,8 @@ abstract class BaseCommand extends Command
 
             return new Config($processedConfiguration);
         } catch (InvalidConfigurationException $e) {
-            die($e->getMessage());
+            $output->writeln(sprintf('<error>%s</error>', stripslashes($e->getMessage())));
+            die();
         }
     }
 }
