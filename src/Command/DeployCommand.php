@@ -6,14 +6,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Command\Command;
 
 /**
  * Deploy command class.
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class DeployCommand extends Command
+class DeployCommand extends BaseCommand
 {
     protected function configure()
     {
@@ -30,6 +29,15 @@ class DeployCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $config = $this->loadConfiguration();
+        $siteName = $input->getArgument('name');
+
+        if (!isset($config['sites'][$siteName])) {
+            $output->writeln(sprintf('<error>No configuration for site "%s" found!.</error>', $siteName));
+            $output->writeln('<error>Exiting.</error>');
+            die();
+        }
+
         echo "We have the technology\n";
     }
 }
