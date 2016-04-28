@@ -2,6 +2,7 @@
 
 namespace Bolt\Deploy\Command;
 
+use Bolt\Deploy\Config\Config;
 use Bolt\Deploy\Config\ConfigurationTree;
 use Bolt\Deploy\Config\YamlFileLoader;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -24,7 +25,7 @@ abstract class BaseCommand extends Command
      *
      * @param array|null $configDirectories
      *
-     * @return array
+     * @return Config
      */
     protected function loadConfiguration(array $configDirectories = null)
     {
@@ -58,7 +59,7 @@ abstract class BaseCommand extends Command
                 $config
             );
 
-            return $processedConfiguration;
+            return new Config($processedConfiguration);
         } catch (InvalidConfigurationException $e) {
             die($e->getMessage());
         }

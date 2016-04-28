@@ -32,7 +32,7 @@ class DeployCommand extends BaseCommand
         $config = $this->loadConfiguration();
         $siteName = $input->getArgument('name');
 
-        if (!isset($config['sites'][$siteName])) {
+        if ($config->getSite($siteName) === null) {
             $output->writeln(sprintf('<error>No configuration for site "%s" found!.</error>', $siteName));
             $output->writeln('<error>Exiting.</error>');
             die();
