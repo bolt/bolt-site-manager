@@ -2,7 +2,6 @@
 
 namespace Bolt\Deploy\Config;
 
-use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Yaml\Yaml;
 
