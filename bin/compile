@@ -21,7 +21,7 @@ chdir($cwd);
 
 require __DIR__.'/../vendor/autoload.php';
 
-use Bolt\Deploy\Compiler;
+use Bolt\Deploy\Util\Compiler;
 
 error_reporting(-1);
 ini_set('display_errors', 1);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bolt\Deploy;
+namespace Bolt\Deploy\Util;
 
 use Phar;
 use Seld\PharUtils\Timestamps;
