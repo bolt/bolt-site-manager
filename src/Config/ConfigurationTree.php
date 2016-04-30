@@ -23,43 +23,57 @@ class ConfigurationTree implements ConfigurationInterface
         $rootNode = $treeBuilder->root('root');
 
         $rootNode
-            ->children()
-                ->arrayNode('paths')
-                    ->ignoreExtraKeys(true)
-                    ->children()
-                        ->scalarNode('git')
-                            ->defaultValue('/usr/bin/git')
-                            ->isRequired()
-                            ->validate()
-                            ->ifTrue(function ($path) { return !realpath($path); })
-                                ->thenInvalid('Could not find git binary at %s.')
-                            ->end()
-                        ->end()
-                        ->scalarNode('rsync')
-                            ->defaultValue('/usr/bin/rsync')
-                            ->isRequired()
-                            ->validate()
-                            ->ifTrue(function ($path) { return !realpath($path); })
-                                ->thenInvalid('Could not find rsync binary at %s.')
-                            ->end()
-                        ->end()
-                        ->scalarNode('setfacl')
-                            ->defaultValue('/usr/bin/setfacl')
-                            ->isRequired()
-                            ->validate()
-                            ->ifTrue(function ($path) { return !realpath($path); })
-                                ->thenInvalid('Could not find setfacl binary at %s.')
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
+            ->append($this->addBinariesNode())
             ->append($this->addPermissionsNode())
             ->append($this->addAclNode())
             ->append($this->addSitesNode())
         ;
 
         return $treeBuilder;
+    }
+
+    /**
+     * File system permission configuration node.
+     *
+     * @return ArrayNodeDefinition
+     */
+    protected function addBinariesNode()
+    {
+        $builder = new TreeBuilder();
+        /** @var ArrayNodeDefinition $node */
+        $node = $builder->root('binaries');
+
+        $node
+            ->ignoreExtraKeys(true)
+            ->children()
+                ->scalarNode('git')
+                    ->defaultValue('/usr/bin/git')
+                    ->isRequired()
+                    ->validate()
+                    ->ifTrue(function ($path) { return !realpath($path); })
+                        ->thenInvalid('Could not find git binary at %s.')
+                    ->end()
+                ->end()
+                ->scalarNode('rsync')
+                    ->defaultValue('/usr/bin/rsync')
+                    ->isRequired()
+                    ->validate()
+                    ->ifTrue(function ($path) { return !realpath($path); })
+                        ->thenInvalid('Could not find rsync binary at %s.')
+                    ->end()
+                ->end()
+                ->scalarNode('setfacl')
+                    ->defaultValue('/usr/bin/setfacl')
+                    ->isRequired()
+                    ->validate()
+                    ->ifTrue(function ($path) { return !realpath($path); })
+                        ->thenInvalid('Could not find setfacl binary at %s.')
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 
     /**
@@ -75,11 +89,12 @@ class ConfigurationTree implements ConfigurationInterface
 
         $node
             ->children()
-            ->scalarNode('user')
-                ->isRequired()
-            ->end()
-            ->scalarNode('group')
-                ->isRequired()
+                ->scalarNode('user')
+                    ->isRequired()
+                ->end()
+                ->scalarNode('group')
+                    ->isRequired()
+                ->end()
             ->end()
         ;
 

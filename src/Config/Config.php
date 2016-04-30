@@ -5,7 +5,7 @@ namespace Bolt\Deploy\Config;
 class Config
 {
     /** @var array */
-    protected $paths;
+    protected $binaries;
     /** @var Site[] */
     protected $sites;
     /** @var array */
@@ -20,7 +20,7 @@ class Config
      */
     public function __construct(array $config)
     {
-        $this->paths = $config['paths'];
+        $this->binaries = $config['binaries'];
         foreach ($config['sites'] as $name => $data) {
             $this->sites[$name] = new Site($name, $data);
         }
@@ -33,27 +33,27 @@ class Config
      *
      * @return string
      */
-    public function getPath($name)
+    public function getBinary($name)
     {
-        return $this->paths[$name];
+        return $this->binaries[$name];
     }
 
     /**
      * @return array
      */
-    public function getPaths()
+    public function getBinaries()
     {
-        return $this->paths;
+        return $this->binaries;
     }
 
     /**
-     * @param array $paths
+     * @param array $binaries
      *
      * @return Config
      */
-    public function setPaths($paths)
+    public function setBinaries($binaries)
     {
-        $this->paths = $paths;
+        $this->binaries = $binaries;
 
         return $this;
     }
