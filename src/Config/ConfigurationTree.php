@@ -92,6 +92,9 @@ class ConfigurationTree implements ConfigurationInterface
                         ->isRequired()
                         ->defaultTrue()
                     ->end()
+                    ->arrayNode('exclude')
+                        ->prototype('scalar')->end()
+                    ->end()
                 ->end()
             ->end()
         ;
