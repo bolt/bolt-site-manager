@@ -53,8 +53,18 @@ class DeployCommand extends BaseCommand
         try {
             $backup->execute();
             $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteName, $backup->getBackupPath()));
-        } catch (IOException $e) {
+        } catch (\Exception $e) {
             $output->writeln('<error>Failed to backup site.</error>');
+            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+            die();
+        }
+
+        $updateTarget = new Action\UpdateTarget($config->getSite($siteName));
+        try {
+            $updateTarget->execute();
+            $output->writeln(sprintf('<info>Successfully updated %s.</info>', $siteName));
+        } catch (\Exception $e) {
+            $output->writeln('<error>Failed to update site.</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
