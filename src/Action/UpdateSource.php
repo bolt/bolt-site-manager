@@ -8,7 +8,6 @@ use Composer\Console\Application as ComposerApplication;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-
 /**
  * Update source repository action class.
  *

@@ -5,7 +5,6 @@ namespace Bolt\Deploy\Action;
 use AFM\Rsync\Rsync;
 use Bolt\Deploy\Config\Site;
 
-
 /**
  * Update site action class.
  *

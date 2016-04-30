@@ -2,7 +2,7 @@
 
 namespace Bolt\Deploy\Util;
 
-use \SebastianBergmann\Git\Git as GitBase;
+use SebastianBergmann\Git\Git as GitBase;
 
 /**
  * Git helper.

@@ -36,7 +36,7 @@ abstract class BaseCommand extends Command
 
         $locator = new FileLocator($configDirectories);
         $loaders = [
-            new YamlFileLoader($locator)
+            new YamlFileLoader($locator),
         ];
 
         $loaderResolver = new LoaderResolver($loaders);
@@ -47,7 +47,7 @@ abstract class BaseCommand extends Command
 
         try {
             $config = [
-                'root' => $delegatingLoader->load($configDirectories[0] . '/config.yml')
+                'root' => $delegatingLoader->load($configDirectories[0] . '/config.yml'),
             ];
         } catch (FileLoaderLoadException $e) {
             $output->writeln(sprintf('<error>%s</error>', stripslashes($e->getMessage())));
