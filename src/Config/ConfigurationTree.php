@@ -42,6 +42,9 @@ class ConfigurationTree implements ConfigurationInterface
         $builder = new TreeBuilder();
         /** @var ArrayNodeDefinition $node */
         $node = $builder->root('binaries');
+        $pathCheck = function ($path) {
+            return !realpath($path);
+        };
 
         $node
             ->ignoreExtraKeys(true)
@@ -50,7 +53,7 @@ class ConfigurationTree implements ConfigurationInterface
                     ->defaultValue('/usr/bin/git')
                     ->isRequired()
                     ->validate()
-                    ->ifTrue(function ($path) { return !realpath($path); })
+                    ->ifTrue($pathCheck)
                         ->thenInvalid('Could not find git binary at %s.')
                     ->end()
                 ->end()
@@ -58,7 +61,7 @@ class ConfigurationTree implements ConfigurationInterface
                     ->defaultValue('/usr/bin/rsync')
                     ->isRequired()
                     ->validate()
-                    ->ifTrue(function ($path) { return !realpath($path); })
+                    ->ifTrue($pathCheck)
                         ->thenInvalid('Could not find rsync binary at %s.')
                     ->end()
                 ->end()
@@ -66,7 +69,7 @@ class ConfigurationTree implements ConfigurationInterface
                     ->defaultValue('/usr/bin/setfacl')
                     ->isRequired()
                     ->validate()
-                    ->ifTrue(function ($path) { return !realpath($path); })
+                    ->ifTrue($pathCheck)
                         ->thenInvalid('Could not find setfacl binary at %s.')
                     ->end()
                 ->end()
@@ -136,7 +139,9 @@ class ConfigurationTree implements ConfigurationInterface
         $builder = new TreeBuilder();
         /** @var ArrayNodeDefinition $node */
         $node = $builder->root('sites');
-        $pathCheck = function ($path) { return !realpath($path); };
+        $pathCheck = function ($path) {
+            return !realpath($path);
+        };
 
         $node
             ->isRequired()
