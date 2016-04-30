@@ -59,7 +59,7 @@ class Site
      */
     public function getPath($path)
     {
-        return $this->paths[$path];
+        return rtrim($this->paths[$path], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     /**
