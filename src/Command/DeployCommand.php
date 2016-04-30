@@ -35,7 +35,7 @@ class DeployCommand extends BaseCommand
         $siteConfig = $config->getSite($siteName);
 
         if ($siteConfig === null) {
-            $output->writeln(sprintf('<error>No configuration for site "%s" found!.</error>', $siteName));
+            $output->writeln(sprintf('<error>No configuration for site "%s" found!</error>', $siteName));
             $output->writeln('<error>Exiting.</error>');
             die();
         }
@@ -43,8 +43,9 @@ class DeployCommand extends BaseCommand
         $updateSource = new Action\UpdateSource($siteConfig);
         try {
             $updateSource->execute();
+            $output->writeln(sprintf('<info>Successfully updated git repository.</info>', $siteName));
         } catch (\Exception $e) {
-            $output->writeln('<error>Failed to update source repository.</error>');
+            $output->writeln('<error>Failed to update source repository!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
@@ -54,7 +55,7 @@ class DeployCommand extends BaseCommand
             $backup->execute();
             $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteName, $backup->getBackupPath()));
         } catch (\Exception $e) {
-            $output->writeln('<error>Failed to backup site.</error>');
+            $output->writeln('<error>Failed to backup site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
@@ -64,7 +65,7 @@ class DeployCommand extends BaseCommand
             $updateTarget->execute();
             $output->writeln(sprintf('<info>Successfully updated %s.</info>', $siteName));
         } catch (\Exception $e) {
-            $output->writeln('<error>Failed to update site.</error>');
+            $output->writeln('<error>Failed to update site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
