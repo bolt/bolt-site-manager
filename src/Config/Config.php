@@ -2,6 +2,13 @@
 
 namespace Bolt\Deploy\Config;
 
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Exception\FileLoaderLoadException;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Loader\DelegatingLoader;
+use Symfony\Component\Config\Loader\LoaderResolver;
+
 class Config
 {
     /** @var array */
@@ -16,10 +23,12 @@ class Config
     /**
      * Constructor.
      *
-     * @param array $config
+     * @param string|array $configFile
      */
-    public function __construct(array $config)
+    public function __construct($configFile)
     {
+        $config = $this->loadConfiguration($configFile);
+
         $this->binaries = $config['binaries'];
         foreach ($config['sites'] as $name => $data) {
             $this->sites[$name] = new Site($name, $data);
@@ -160,5 +169,39 @@ class Config
         $this->acls = $acls;
 
         return $this;
+    }
+
+    /**
+     * Load and validate configuration.
+     * 
+     * @param $configFile
+     *
+     * @throws FileLoaderLoadException
+     * @throws InvalidConfigurationException
+     *
+     * @return array
+     */
+    protected function loadConfiguration($configFile)
+    {
+        $configDirectory = (array) dirname($configFile);
+        $locator = new FileLocator($configDirectory);
+        $loaders = [
+            new YamlFileLoader($locator),
+        ];
+
+        $loaderResolver = new LoaderResolver($loaders);
+        $delegatingLoader = new DelegatingLoader($loaderResolver);
+
+        $configuration = new ConfigurationTree();
+        $processor = new Processor();
+
+        $config = [
+            'root' => $delegatingLoader->load($configFile),
+        ];
+
+        return $processor->processConfiguration(
+            $configuration,
+            $config
+        );
     }
 }

@@ -6,6 +6,7 @@ use Bolt\Deploy\Action;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -23,6 +24,7 @@ class DeployCommand extends BaseCommand
             ->setDefinition(
                 new InputDefinition([
                     new InputArgument('name', InputArgument::REQUIRED, 'Name of the site to deploy.'),
+                    new InputOption('config', null, InputOption::VALUE_REQUIRED, 'Optional configuration file override. Defaults to ~/.deploy.yml'),
                 ])
             )
         ;
@@ -30,7 +32,7 @@ class DeployCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = $this->loadConfiguration($output);
+        $config = $this->loadConfiguration($input, $output);
         $siteName = $input->getArgument('name');
         $siteConfig = $config->getSite($siteName);
 

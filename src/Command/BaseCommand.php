@@ -3,15 +3,10 @@
 namespace Bolt\Deploy\Command;
 
 use Bolt\Deploy\Config\Config;
-use Bolt\Deploy\Config\ConfigurationTree;
-use Bolt\Deploy\Config\YamlFileLoader;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLoaderLoadException;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Loader\DelegatingLoader;
-use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -24,43 +19,28 @@ abstract class BaseCommand extends Command
     /**
      * Load configuration files.
      *
-     * @param array|null $configDirectories
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      *
      * @return Config
      */
-    protected function loadConfiguration(OutputInterface $output, array $configDirectories = null)
+    protected function loadConfiguration(InputInterface $input, OutputInterface $output)
     {
-        if ($configDirectories === null) {
-            $configDirectories = [getcwd()];
+        if ($input->getOption('config') !== null) {
+            $configFile = $input->getOption('config');
+        } elseif (file_exists(getcwd() . '/.deploy.yml')) {
+            $configFile = getcwd() . '/.deploy.yml';
+        } elseif (file_exists('/etc/deploy.yml')) {
+            $configFile = '/etc/deploy.yml';
+        } else {
+            $configFile = getenv('HOME') . '/.deploy.yml';
         }
 
-        $locator = new FileLocator($configDirectories);
-        $loaders = [
-            new YamlFileLoader($locator),
-        ];
-
-        $loaderResolver = new LoaderResolver($loaders);
-        $delegatingLoader = new DelegatingLoader($loaderResolver);
-
-        $configuration = new ConfigurationTree();
-        $processor = new Processor();
-
         try {
-            $config = [
-                'root' => $delegatingLoader->load($configDirectories[0] . '/config.yml'),
-            ];
+            return new Config($configFile);
         } catch (FileLoaderLoadException $e) {
             $output->writeln(sprintf('<error>%s</error>', stripslashes($e->getMessage())));
             die();
-        }
-
-        try {
-            $processedConfiguration = $processor->processConfiguration(
-                $configuration,
-                $config
-            );
-
-            return new Config($processedConfiguration);
         } catch (InvalidConfigurationException $e) {
             $output->writeln(sprintf('<error>%s</error>', stripslashes($e->getMessage())));
             die();
