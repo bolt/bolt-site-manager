@@ -32,14 +32,15 @@ class DeployCommand extends BaseCommand
     {
         $config = $this->loadConfiguration($output);
         $siteName = $input->getArgument('name');
+        $siteConfig = $config->getSite($siteName);
 
-        if ($config->getSite($siteName) === null) {
+        if ($siteConfig === null) {
             $output->writeln(sprintf('<error>No configuration for site "%s" found!.</error>', $siteName));
             $output->writeln('<error>Exiting.</error>');
             die();
         }
 
-        $updateSource = new Action\UpdateSource($config->getSite($siteName));
+        $updateSource = new Action\UpdateSource($siteConfig);
         try {
             $updateSource->execute();
         } catch (\Exception $e) {
@@ -48,7 +49,7 @@ class DeployCommand extends BaseCommand
             die();
         }
 
-        $backup = new Action\Backup($config->getSite($siteName));
+        $backup = new Action\Backup($siteConfig);
         try {
             $backup->execute();
             $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteName, $backup->getBackupPath()));
@@ -58,7 +59,7 @@ class DeployCommand extends BaseCommand
             die();
         }
 
-        $updateTarget = new Action\UpdateTarget($config->getSite($siteName));
+        $updateTarget = new Action\UpdateTarget($siteConfig);
         try {
             $updateTarget->execute();
             $output->writeln(sprintf('<info>Successfully updated %s.</info>', $siteName));
