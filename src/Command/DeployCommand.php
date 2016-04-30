@@ -2,10 +2,12 @@
 
 namespace Bolt\Deploy\Command;
 
+use Bolt\Deploy\Action;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 /**
  * Deploy command class.
@@ -35,6 +37,16 @@ class DeployCommand extends BaseCommand
         if ($config->getSite($siteName) === null) {
             $output->writeln(sprintf('<error>No configuration for site "%s" found!.</error>', $siteName));
             $output->writeln('<error>Exiting.</error>');
+            die();
+        }
+
+        $backup = new Action\Backup($config->getSite($siteName));
+        try {
+            $backup->execute();
+            $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteName, $backup->getBackupPath()));
+        } catch (IOException $e) {
+            $output->writeln('<error>Failed to backup site.</error>');
+            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
 
