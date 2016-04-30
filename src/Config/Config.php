@@ -8,6 +8,10 @@ class Config
     protected $paths;
     /** @var Site[] */
     protected $sites;
+    /** @var array */
+    protected $permissions;
+    /** @var array */
+    protected $acls;
 
     /**
      * Constructor.
@@ -20,6 +24,8 @@ class Config
         foreach ($config['sites'] as $name => $data) {
             $this->sites[$name] = new Site($name, $data);
         }
+        $this->permissions = $config['permissions'];
+        $this->acls = $config['acls'];
     }
 
     /**
@@ -92,6 +98,66 @@ class Config
     public function setSites($sites)
     {
         $this->sites = $sites;
+
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    public function getPermission($type)
+    {
+        return $this->permissions[$type];
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
+    }
+
+    /**
+     * @param array $permissions
+     *
+     * @return Config
+     */
+    public function setPermissions($permissions)
+    {
+        $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return array
+     */
+    public function getAcl($type)
+    {
+        return $this->acls[$type];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAcls()
+    {
+        return $this->acls;
+    }
+
+    /**
+     * @param array $acls
+     *
+     * @return Config
+     */
+    public function setAcls($acls)
+    {
+        $this->acls = $acls;
 
         return $this;
     }

@@ -43,14 +43,72 @@ class ConfigurationTree implements ConfigurationInterface
                                 ->thenInvalid('Could not find rsync binary at %s.')
                             ->end()
                         ->end()
-
+                        ->scalarNode('setfacl')
+                            ->defaultValue('/usr/bin/setfacl')
+                            ->isRequired()
+                            ->validate()
+                            ->ifTrue(function ($path) { return !realpath($path); })
+                                ->thenInvalid('Could not find setfacl binary at %s.')
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()
+            ->append($this->addPermissionsNode())
+            ->append($this->addAclNode())
             ->append($this->addSitesNode())
         ;
 
         return $treeBuilder;
+    }
+
+    /**
+     * File system permission configuration node.
+     *
+     * @return ArrayNodeDefinition
+     */
+    protected function addPermissionsNode()
+    {
+        $builder = new TreeBuilder();
+        /** @var ArrayNodeDefinition $node */
+        $node = $builder->root('permissions');
+
+        $node
+            ->children()
+            ->scalarNode('user')
+                ->isRequired()
+            ->end()
+            ->scalarNode('group')
+                ->isRequired()
+            ->end()
+        ;
+
+        return $node;
+    }
+
+    /**
+     * ACL configuration node.
+     *
+     * @return ArrayNodeDefinition
+     */
+    protected function addAclNode()
+    {
+        $builder = new TreeBuilder();
+        /** @var ArrayNodeDefinition $node */
+        $node = $builder->root('acls');
+
+        $node
+            ->children()
+                ->arrayNode('users')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('groups')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
+        ;
+
+        return $node;
     }
 
     /**
