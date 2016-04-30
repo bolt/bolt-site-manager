@@ -70,6 +70,14 @@ class DeployCommand extends BaseCommand
             die();
         }
 
-        echo "We have the technology\n";
+        $setPermissions = new Action\SetPermissions($config, $siteConfig);
+        try {
+            $setPermissions->execute();
+            $output->writeln('<info>Successfully updated permissions & access control lists.</info>');
+        } catch (\Exception $e) {
+            $output->writeln('<error>Failed to update permissions & access control lists!</error>');
+            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+            die();
+        }
     }
 }
