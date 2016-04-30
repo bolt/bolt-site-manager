@@ -40,6 +40,15 @@ class DeployCommand extends BaseCommand
             die();
         }
 
+        $updateSource = new Action\UpdateSource($config->getSite($siteName));
+        try {
+            $updateSource->execute();
+        } catch (\Exception $e) {
+            $output->writeln('<error>Failed to update source repository.</error>');
+            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+            die();
+        }
+
         $backup = new Action\Backup($config->getSite($siteName));
         try {
             $backup->execute();
