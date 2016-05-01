@@ -89,10 +89,11 @@ class Compiler
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
-            ->exclude('Compiler.php')
+            ->notName('Compiler.php')
             ->in($this->rootDir . '/src/')
             ->sort($finderSort)
         ;
+        /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ($finder as $file) {
             $this->addFile($phar, $file);
         }
@@ -102,13 +103,25 @@ class Compiler
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
+            ->name('composer-schema.json')
             ->name('LICENSE')
             ->exclude('Tests')
             ->exclude('tests')
             ->exclude('docs')
-            ->in($this->rootDir . '/vendor/symfony/')
+            ->in([
+                $this->rootDir . '/vendor/albertofem/rsync-lib/src/',
+                $this->rootDir . '/vendor/composer/ca-bundle/src/',
+                $this->rootDir . '/vendor/composer/composer/',
+                $this->rootDir . '/vendor/composer/semver/src/',
+                $this->rootDir . '/vendor/nesbot/carbon/src/',
+                $this->rootDir . '/vendor/justinrainbow/json-schema/src/',
+                $this->rootDir . '/vendor/psr/log/',
+                $this->rootDir . '/vendor/seld/jsonlint/src/',
+                $this->rootDir . '/vendor/symfony/',
+            ])
             ->sort($finderSort)
         ;
+        /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ($finder as $file) {
             $this->addFile($phar, $file);
         }
