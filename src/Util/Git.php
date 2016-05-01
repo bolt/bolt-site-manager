@@ -51,7 +51,7 @@ class Git
      */
     public function pull($remote = 'origin', $branch = 'master')
     {
-        $this->execute(sprintf('pull %s %s', $remote, $branch));
+        $this->execute(sprintf('pull --rebase %s %s', $remote, $branch));
     }
 
     /**
