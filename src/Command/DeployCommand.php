@@ -42,7 +42,7 @@ class DeployCommand extends BaseCommand
             die();
         }
 
-        $updateSource = new Action\UpdateSource($siteConfig);
+        $updateSource = new Action\UpdateSource($config, $siteConfig);
         try {
             $updateSource->execute();
             $output->writeln(sprintf('<info>Successfully updated git repository.</info>', $siteName));

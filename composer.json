@@ -13,7 +13,6 @@
         "albertofem/rsync-lib": "dev-master",
         "composer/composer": "^1.0",
         "nesbot/carbon": "^1.21",
-        "sebastian/git": "^2.1@dev",
         "symfony/config": "^3.0",
         "symfony/console": "^3.0",
         "symfony/process": "^3.0",
