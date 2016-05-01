@@ -65,7 +65,7 @@ class DeployCommand extends BaseCommand
         $updateTarget = new Action\UpdateTarget($siteConfig);
         try {
             $updateTarget->execute();
-            $output->writeln(sprintf('<info>Successfully updated %s.</info>', $siteName));
+            $output->writeln(sprintf('<info>Successfully synchronised %s with deployment copy.</info>', $siteName));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to update site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
