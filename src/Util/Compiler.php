@@ -20,11 +20,21 @@ use Symfony\Component\Process\Process;
 class Compiler
 {
     /** @var string */
+    private $rootDir;
+    /** @var string */
     private $version;
     /** @var string */
     private $branchAliasVersion = '';
     /** @var \DateTime */
     private $versionDate;
+
+    /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        $this->rootDir = dirname(dirname(__DIR__));
+    }
 
     /**
      * Compiles deploy command into a PHAR file
@@ -40,7 +50,7 @@ class Compiler
             $fs->remove($pharFile);
         }
 
-        $process = new Process('git log --pretty="%H" -n1 HEAD', __DIR__);
+        $process = new Process('git log --pretty="%H" -n1 HEAD', $this->rootDir);
         if ($process->run() != 0) {
             throw new \RuntimeException(
                 'Can\'t run git log. You must ensure that compile is run from a deploy-script git repository clone and that git binary is available.'
@@ -48,7 +58,7 @@ class Compiler
         }
         $this->version = trim($process->getOutput());
 
-        $process = new Process('git log -n1 --pretty=%ci HEAD', __DIR__);
+        $process = new Process('git log -n1 --pretty=%ci HEAD', $this->rootDir);
         if ($process->run() != 0) {
             throw new \RuntimeException(
                 'Can\'t run git log. You must ensure that compile is run from a deploy-script git repository clone and that git binary is available.'
@@ -79,7 +89,8 @@ class Compiler
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
-            ->in(__DIR__ . '/../src/')
+            ->exclude('Compiler.php')
+            ->in($this->rootDir . '/src/')
             ->sort($finderSort)
         ;
         foreach ($finder as $file) {
@@ -95,7 +106,7 @@ class Compiler
             ->exclude('Tests')
             ->exclude('tests')
             ->exclude('docs')
-            ->in(__DIR__ . '/../vendor/symfony/')
+            ->in($this->rootDir . '/vendor/symfony/')
             ->sort($finderSort)
         ;
         foreach ($finder as $file) {
@@ -103,16 +114,16 @@ class Compiler
         }
 
         // Compile in Composer autoload files
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/autoload.php'));
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/composer/autoload_namespaces.php'));
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/composer/autoload_psr4.php'));
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/composer/autoload_classmap.php'));
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/composer/autoload_files.php'));
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/composer/autoload_real.php'));
-        if (file_exists(__DIR__ . '/../vendor/composer/include_paths.php')) {
-            $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/composer/include_paths.php'));
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/autoload.php'));
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_namespaces.php'));
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_psr4.php'));
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_classmap.php'));
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_files.php'));
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_real.php'));
+        if (file_exists($this->rootDir . '/vendor/composer/include_paths.php')) {
+            $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/include_paths.php'));
         }
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../vendor/composer/ClassLoader.php'));
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/ClassLoader.php'));
         $this->addComparatorBin($phar);
 
         // Stubs
@@ -125,7 +136,7 @@ class Compiler
             $phar->compressFiles(Phar::GZ);
         }
 
-        $this->addFile($phar, new SplFileInfo(__DIR__ . '/../LICENSE'), false);
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/LICENSE'), false);
 
         unset($phar);
 
@@ -144,7 +155,7 @@ class Compiler
      */
     private function addFile(Phar $phar, SplFileInfo $file, $strip = true)
     {
-        $path = strtr(str_replace(dirname(__DIR__) . DIRECTORY_SEPARATOR, '', $file->getRealPath()), '\\', '/');
+        $path = strtr(str_replace($this->rootDir . DIRECTORY_SEPARATOR, '', $file->getRealPath()), '\\', '/');
 
         $content = file_get_contents($file);
         if ($strip) {
@@ -169,7 +180,7 @@ class Compiler
      */
     private function addComparatorBin(Phar $phar)
     {
-        $content = file_get_contents(__DIR__ . '/../bin/deploy');
+        $content = file_get_contents($this->rootDir . '/bin/deploy');
         $content = preg_replace('{^#!/usr/bin/env php\s*}', '', $content);
         $phar->addFromString('bin/deploy', $content);
     }
