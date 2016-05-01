@@ -6,6 +6,7 @@ use Bolt\Deploy\Config\Config;
 use Bolt\Deploy\Config\Site;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Permission & ACL action class.
@@ -18,6 +19,8 @@ class SetPermissions implements ActionInterface
     protected $config;
     /** @var Site */
     protected $siteConfig;
+    /** @var string */
+    protected $logFile;
 
     /**
      * Constructor.
@@ -46,7 +49,7 @@ class SetPermissions implements ActionInterface
                 $this->config->getPermission('group'),
                 $sitePath
             );
-            exec($chown);
+            $this->runProcess(new Process($chown));
         }
 
         $setfacls = [];
@@ -62,10 +65,22 @@ class SetPermissions implements ActionInterface
         }
 
         $setfacl = sprintf('%s %s', implode(' ', $setfacls), $sitePath);
-        exec('setfacl -R ' . $setfacl);
-        exec('setfacl -dR ' . $setfacl);
+        $this->runProcess(new Process('setfacl -R ' . $setfacl));
+        $this->runProcess(new Process('setfacl -dR ' . $setfacl));
+
+        if ($this->logFile !== null) {
+            throw new \RuntimeException(sprintf('Failed to set permissions, details logged to %s', $this->logFile));
+        }
     }
 
+    /**
+     * Check if an operating system user exists.
+     *
+     * @param OutputInterface $output
+     * @param string          $user
+     *
+     * @return bool
+     */
     private function userExists(OutputInterface $output, $user)
     {
         exec(sprintf('id -u %s 2>&1 > /dev/null', $user), $cmdOutput, $cmdReturn);
@@ -78,6 +93,14 @@ class SetPermissions implements ActionInterface
         return true;
     }
 
+    /**
+     * Check if an operating system group exists.
+     * 
+     * @param OutputInterface $output
+     * @param string          $group
+     *
+     * @return bool
+     */
     private function groupExists(OutputInterface $output, $group)
     {
         exec(sprintf('id -g %s 2>&1 > /dev/null', $group), $cmdOutput, $cmdReturn);
@@ -88,5 +111,24 @@ class SetPermissions implements ActionInterface
         }
 
         return true;
+    }
+
+    /**
+     * Run a process and log any failures.
+     *
+     * @param Process $process
+     */
+    private function runProcess(Process $process)
+    {
+        $process->run();
+        if ($process->isSuccessful()) {
+            return;
+        }
+
+        if ($this->logFile === null) {
+            $this->logFile = tempnam(sys_get_temp_dir(), 'deploy-');
+        }
+
+        file_put_contents($this->logFile, $process->getErrorOutput(), FILE_APPEND);
     }
 }
