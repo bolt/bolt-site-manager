@@ -58,6 +58,9 @@ class DeployCommand extends BaseCommand
         // If enabled do file backups
         $this->doBackupFiles($siteConfig, $input, $output);
 
+        // If enabled do database backups
+        $this->doBackupDatabase($config, $siteConfig, $input, $output);
+
         // Update the site target from the source
         $this->doUpdateTarget($siteConfig, $output);
 
@@ -98,6 +101,29 @@ class DeployCommand extends BaseCommand
         try {
             $backup->execute();
             $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteConfig->getName(), $backup->getBackupPath()));
+        } catch (\Exception $e) {
+            $output->writeln('<error>Failed to backup site!</error>');
+            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+            die();
+        }
+    }
+
+    /**
+     * @param Config          $config
+     * @param Site            $siteConfig
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     */
+    protected function doBackupDatabase(Config $config, Site $siteConfig, InputInterface $input, OutputInterface $output)
+    {
+        if ($input->getOption('skip-backup-database') === true) {
+            return;
+        }
+
+        $backup = new Action\BackupDatabase($config, $siteConfig);
+        try {
+            $backup->execute();
+            $output->writeln(sprintf('<info>Successfully backed up %s database to %s</info>', $siteConfig->getName(), $backup->getBackupFileName()));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to backup site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));

@@ -45,9 +45,9 @@ sites:
             source: /data/example.com
             backup: /backup/example.com
         backup:
+            timestamp: false
             files:
                 enabled: true
-                timestamp: false
             database:
                 enabled: false
                 auth_file: /var/www/sites/example.com/app/config/config.yml
