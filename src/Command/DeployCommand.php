@@ -30,6 +30,8 @@ class DeployCommand extends BaseCommand
                 new InputDefinition([
                     new InputArgument('name', InputArgument::REQUIRED, 'Name of the site to deploy.'),
                     new InputOption('config', null, InputOption::VALUE_REQUIRED, 'Optional configuration file override. Defaults to ~/.deploy.yml'),
+                    new InputOption('skip-backup-files', null, InputOption::VALUE_NONE, 'Skip backup of site files.'),
+                    new InputOption('skip-backup-database', null, InputOption::VALUE_NONE, 'Skip backup of database.'),
                 ])
             )
         ;
