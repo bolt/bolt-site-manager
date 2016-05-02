@@ -44,7 +44,13 @@ sites:
             site: /var/www/sites/example.com
             source: /data/example.com
             backup: /backup/example.com
-        backup: true
+        backup:
+            files:
+                enabled: true
+                timestamp: false
+            database:
+                enabled: false
+                auth_file: /var/www/sites/example.com/app/config/config.yml
         exclude:
             - vendor
             - README.md
