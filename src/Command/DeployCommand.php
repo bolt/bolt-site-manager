@@ -3,6 +3,8 @@
 namespace Bolt\Deploy\Command;
 
 use Bolt\Deploy\Action;
+use Bolt\Deploy\Config\Config;
+use Bolt\Deploy\Config\Site;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,6 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DeployCommand extends BaseCommand
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -30,6 +35,9 @@ class DeployCommand extends BaseCommand
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $config = $this->loadConfiguration($input, $output);
@@ -42,36 +50,71 @@ class DeployCommand extends BaseCommand
             die();
         }
 
+        $this->doUpdateSource($config, $siteConfig, $output);
+        $this->doBackup($siteConfig, $output);
+        $this->doUpdateTarget($siteConfig, $output);
+        $this->doSetPermissions($config, $siteConfig, $output);
+    }
+
+    /**
+     * @param Config          $config
+     * @param Site            $siteConfig
+     * @param OutputInterface $output
+     */
+    protected function doUpdateSource(Config $config, Site $siteConfig, OutputInterface $output)
+    {
         $updateSource = new Action\UpdateSource($config, $siteConfig);
         try {
             $updateSource->execute();
-            $output->writeln(sprintf('<info>Successfully updated git repository.</info>', $siteName));
+            $output->writeln(sprintf('<info>Successfully updated git repository.</info>', $siteConfig->getName()));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to update source repository!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
+    }
 
+    /**
+     * @param Site            $siteConfig
+     * @param OutputInterface $output
+     */
+    protected function doBackup(Site $siteConfig, OutputInterface $output)
+    {
         $backup = new Action\Backup($siteConfig);
         try {
             $backup->execute();
-            $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteName, $backup->getBackupPath()));
+            $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteConfig->getName(), $backup->getBackupPath()));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to backup site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
+    }
 
+    /**
+     * @param Site            $siteConfig
+     * @param OutputInterface $output
+     */
+    protected function doUpdateTarget(Site $siteConfig, OutputInterface $output)
+    {
         $updateTarget = new Action\UpdateTarget($siteConfig);
         try {
             $updateTarget->execute();
-            $output->writeln(sprintf('<info>Successfully synchronised %s with deployment copy.</info>', $siteName));
+            $output->writeln(sprintf('<info>Successfully synchronised %s with deployment copy.</info>', $siteConfig->getName()));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to update site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             die();
         }
+    }
 
+    /**
+     * @param Config          $config
+     * @param Site            $siteConfig
+     * @param OutputInterface $output
+     */
+    protected function doSetPermissions(Config $config, Site $siteConfig, OutputInterface $output)
+    {
         $setPermissions = new Action\SetPermissions($config, $siteConfig);
         try {
             $setPermissions->execute();
