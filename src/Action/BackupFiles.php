@@ -29,11 +29,12 @@ class BackupFiles implements ActionInterface
      */
     public function __construct(Site $siteConfig)
     {
-        $timestamp = Carbon::now()->format('Ymd-His');
-
         $this->enabled = $siteConfig->isBackupFiles();
         $this->sitePath = $siteConfig->getPath('site');
-        $this->backupPath = sprintf('%s%s/', $siteConfig->getPath('backup'), $timestamp);
+        $this->backupPath = $siteConfig->isBackupFilesTimestamp()
+            ? sprintf('%s%s/', $siteConfig->getPath('backup'), Carbon::now()->format('Ymd-His'))
+            : $siteConfig->getPath('backup')
+        ;
         $this->excluded = $siteConfig->getExclude();
     }
 
