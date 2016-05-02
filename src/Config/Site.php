@@ -2,6 +2,11 @@
 
 namespace Bolt\Deploy\Config;
 
+use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Parser;
+
 /**
  * Individual site configuration.
  *
@@ -13,7 +18,7 @@ class Site
     protected $name;
     /** @var array */
     protected $paths;
-    /** @var boolean */
+    /** @var array */
     protected $backup;
     /** @var array */
     protected $exclude;
@@ -85,13 +90,60 @@ class Site
     /**
      * @return boolean
      */
-    public function isBackup()
+    public function isBackupFiles()
     {
-        return $this->backup;
+        return $this->backup['files']['enabled'];
     }
 
     /**
-     * @param boolean $backup
+     * @return boolean
+     */
+    public function isBackupFilesTimestamp()
+    {
+        return $this->backup['files']['timestamp'];
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isBackupDatabase()
+    {
+        return $this->backup['database']['enabled'];
+    }
+
+    /**
+     * @throws ParseException
+     * @throws RuntimeException
+     *
+     * @return array
+     */
+    public function getBackupDatabaseAuth()
+    {
+        $parser = new Parser();
+        $fs = new Filesystem();
+        $fileName = $this->backup['database']['auth_file'];
+
+        if (!$fs->exists($fileName)) {
+            throw new RuntimeException(sprintf('Database credentials YAML file not found: %s', $fileName));
+        }
+
+        $config = $parser->parse(file_get_contents($fileName));
+
+        if (!isset($config['database'])) {
+            throw new RuntimeException(sprintf('Database credentials YAML file does not contain "database:" key:%s', $fileName));
+        }
+        if (!isset($config['database']['username'])) {
+            throw new RuntimeException(sprintf('Database credentials YAML file does not contain database "username:" key:%s', $fileName));
+        }
+        if (!isset($config['database']['password'])) {
+            throw new RuntimeException(sprintf('Database credentials YAML file does not contain database "password:" key:%s', $fileName));
+        }
+
+        return $config['database'];
+    }
+
+    /**
+     * @param array $backup
      *
      * @return Site
      */
