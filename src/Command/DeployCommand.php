@@ -52,9 +52,16 @@ class DeployCommand extends BaseCommand
             die();
         }
 
+        // Update the source from its git repository
         $this->doUpdateSource($config, $siteConfig, $output);
-        $this->doBackup($siteConfig, $output);
+
+        // If enabled do file backups
+        $this->doBackupFiles($siteConfig, $input, $output);
+
+        // Update the site target from the source
         $this->doUpdateTarget($siteConfig, $output);
+
+        // Set/reset permissions
         $this->doSetPermissions($config, $siteConfig, $output);
     }
 
@@ -78,11 +85,16 @@ class DeployCommand extends BaseCommand
 
     /**
      * @param Site            $siteConfig
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected function doBackup(Site $siteConfig, OutputInterface $output)
+    protected function doBackupFiles(Site $siteConfig, InputInterface $input, OutputInterface $output)
     {
-        $backup = new Action\Backup($siteConfig);
+        if ($input->getOption('skip-backup-files') === true) {
+            return;
+        }
+
+        $backup = new Action\BackupFiles($siteConfig);
         try {
             $backup->execute();
             $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteConfig->getName(), $backup->getBackupPath()));

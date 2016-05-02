@@ -11,8 +11,10 @@ use Carbon\Carbon;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class Backup implements ActionInterface
+class BackupFiles implements ActionInterface
 {
+    /** @var boolean */
+    protected $enabled;
     /** @var string */
     protected $sitePath;
     /** @var string */
@@ -29,6 +31,7 @@ class Backup implements ActionInterface
     {
         $timestamp = Carbon::now()->format('Ymd-His');
 
+        $this->enabled = $siteConfig->isBackupFiles();
         $this->sitePath = $siteConfig->getPath('site');
         $this->backupPath = sprintf('%s%s/', $siteConfig->getPath('backup'), $timestamp);
         $this->excluded = $siteConfig->getExclude();
@@ -39,6 +42,10 @@ class Backup implements ActionInterface
      */
     public function execute()
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $rsync = new Rsync();
         $rsync->setArchive(true);
         $rsync->setExclude($this->excluded);
