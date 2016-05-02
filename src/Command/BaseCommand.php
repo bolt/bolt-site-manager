@@ -8,6 +8,7 @@ use Symfony\Component\Config\Exception\FileLoaderLoadException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Base command class.
@@ -34,6 +35,12 @@ abstract class BaseCommand extends Command
             $configFile = '/etc/deploy.yml';
         } else {
             $configFile = getenv('HOME') . '/.deploy.yml';
+        }
+
+        $fs = new Filesystem();
+        if (!$fs->exists($configFile)) {
+            $output->writeln('<error>Unable to find valid configuration file.</error>');
+            die();
         }
 
         try {
