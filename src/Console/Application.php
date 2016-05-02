@@ -3,6 +3,7 @@
 namespace Bolt\Deploy\Console;
 
 use Bolt\Deploy\Command\DeployCommand;
+use Carbon\Carbon;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputInterface;
 
@@ -13,6 +14,19 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 class Application extends BaseApplication
 {
+    const VERSION = '1.0.0';
+
+    static $timestamp;
+
+    /**
+     * Constructor.
+     */
+    public function __construct($name = 'deploy')
+    {
+        parent::__construct($name, self::VERSION);
+        self::$timestamp = Carbon::now()->format('Ymd-His');
+    }
+
     /**
      * {@inheritdoc}
      */

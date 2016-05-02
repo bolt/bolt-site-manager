@@ -4,7 +4,7 @@ namespace Bolt\Deploy\Action;
 
 use AFM\Rsync\Rsync;
 use Bolt\Deploy\Config\Site;
-use Carbon\Carbon;
+use Bolt\Deploy\Console\Application;
 
 /**
  * Backup action class.
@@ -32,7 +32,7 @@ class BackupFiles implements ActionInterface
         $this->enabled = $siteConfig->isBackupFiles();
         $this->sitePath = $siteConfig->getPath('site');
         $this->backupPath = $siteConfig->isBackupFilesTimestamp()
-            ? sprintf('%s%s/', $siteConfig->getPath('backup'), Carbon::now()->format('Ymd-His'))
+            ? sprintf('%s%s/', $siteConfig->getPath('backup'), Application::$timestamp)
             : $siteConfig->getPath('backup')
         ;
         $this->excluded = $siteConfig->getExclude();
