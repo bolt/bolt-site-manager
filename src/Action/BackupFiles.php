@@ -5,6 +5,8 @@ namespace Bolt\Deploy\Action;
 use AFM\Rsync\Rsync;
 use Bolt\Deploy\Config\Site;
 use Bolt\Deploy\Console\Application;
+use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Backup action class.
@@ -29,11 +31,15 @@ class BackupFiles implements ActionInterface
      */
     public function __construct(Site $siteConfig)
     {
+        if ($siteConfig->getPath('backup') === '/') {
+            throw new RuntimeException('Stubornly refusing to use / as a backup target.');
+        }
+
         $this->enabled = $siteConfig->isBackupFiles();
         $this->sitePath = $siteConfig->getPath('site');
         $this->backupPath = $siteConfig->isBackupFilesTimestamp()
-            ? sprintf('%s%s/', $siteConfig->getPath('backup'), Application::$timestamp)
-            : $siteConfig->getPath('backup')
+            ? sprintf('%s%s/%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName(), Application::$timestamp)
+            : sprintf('%s%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName())
         ;
         $this->excluded = $siteConfig->getExclude();
     }
@@ -45,6 +51,11 @@ class BackupFiles implements ActionInterface
     {
         if (!$this->enabled) {
             return;
+        }
+
+        $fs = new Filesystem();
+        if (!$fs->exists($this->backupPath)) {
+            $fs->mkdir($this->backupPath);
         }
 
         $rsync = new Rsync();
