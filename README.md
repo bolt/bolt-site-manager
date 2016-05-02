@@ -48,12 +48,12 @@ sites:
             timestamp: false
             files:
                 enabled: true
+                exclude:
+                    - vendor
+                    - README.md
             database:
                 enabled: false
                 auth_file: /var/www/sites/example.com/app/config/config.yml
-        exclude:
-            - vendor
-            - README.md
 ```
 
 The deployment for `example` can then be triggered by running:

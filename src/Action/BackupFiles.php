@@ -41,7 +41,7 @@ class BackupFiles implements ActionInterface
             ? sprintf('%s%s/%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName(), Application::$timestamp)
             : sprintf('%s%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName())
         ;
-        $this->excluded = $siteConfig->getExclude();
+        $this->excluded = $siteConfig->getBackupExcludeFiles();
     }
 
     /**

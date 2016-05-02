@@ -21,7 +21,7 @@ class Site
     /** @var array */
     protected $backup;
     /** @var array */
-    protected $exclude;
+    protected $backupExcludeFiles;
 
     /**
      * Constructor.
@@ -34,7 +34,7 @@ class Site
         $this->name = $name;
         $this->paths = $siteConfig['paths'];
         $this->backup = $siteConfig['backup'];
-        $this->exclude = $siteConfig['exclude'];
+        $this->backupExcludeFiles = $siteConfig['backup']['files']['exclude'];
     }
 
     /**
@@ -157,19 +157,19 @@ class Site
     /**
      * @return array
      */
-    public function getExclude()
+    public function getBackupExcludeFiles()
     {
-        return $this->exclude;
+        return $this->backupExcludeFiles;
     }
 
     /**
-     * @param array $exclude
+     * @param array $backupExcludeFiles
      *
      * @return Site
      */
-    public function setExclude($exclude)
+    public function setBackupExcludeFiles($backupExcludeFiles)
     {
-        $this->exclude = $exclude;
+        $this->backupExcludeFiles = $backupExcludeFiles;
 
         return $this;
     }
