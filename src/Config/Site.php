@@ -90,17 +90,17 @@ class Site
     /**
      * @return boolean
      */
-    public function isBackupFiles()
+    public function isBackupTimestamp()
     {
-        return $this->backup['files']['enabled'];
+        return $this->backup['timestamp'];
     }
 
     /**
      * @return boolean
      */
-    public function isBackupFilesTimestamp()
+    public function isBackupFiles()
     {
-        return $this->backup['files']['timestamp'];
+        return $this->backup['files']['enabled'];
     }
 
     /**

@@ -37,7 +37,7 @@ class BackupFiles implements ActionInterface
 
         $this->enabled = $siteConfig->isBackupFiles();
         $this->sitePath = $siteConfig->getPath('site');
-        $this->backupPath = $siteConfig->isBackupFilesTimestamp()
+        $this->backupPath = $siteConfig->isBackupTimestamp()
             ? sprintf('%s%s/%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName(), Application::$timestamp)
             : sprintf('%s%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName())
         ;
