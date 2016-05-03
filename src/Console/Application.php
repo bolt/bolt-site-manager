@@ -2,7 +2,8 @@
 
 namespace Bolt\Deploy\Console;
 
-use Bolt\Deploy\Command\CreateConfigCommand;
+use Bolt\Deploy\Command\ConfigCreateCommand;
+use Bolt\Deploy\Command\ConfigShowCommand;
 use Bolt\Deploy\Command\DeployCommand;
 use Carbon\Carbon;
 use Symfony\Component\Console\Application as BaseApplication;
@@ -27,7 +28,8 @@ class Application extends BaseApplication
         self::$timestamp = Carbon::now()->format('Ymd-His');
 
         $this->addCommands([
-            new CreateConfigCommand(),
+            new ConfigCreateCommand(),
+            new ConfigShowCommand(),
             new DeployCommand(),
         ]);
     }

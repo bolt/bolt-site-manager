@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class CreateConfigCommand extends AbstractCommand
+class ConfigCreateCommand extends AbstractCommand
 {
     /**
      * {@inheritdoc}
@@ -21,12 +21,11 @@ class CreateConfigCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('config')
-            ->setDescription('Configuration file management')
+            ->setName('config:create')
+            ->setDescription('Configuration file creation')
             ->setDefinition(
                 new InputDefinition([
-                    new InputOption('create', null, InputOption::VALUE_REQUIRED, 'Create a new configuration file'),
-                    new InputOption('show', null, InputOption::VALUE_REQUIRED, 'Show the in-use configuration file'),
+                    new InputOption('file-name', null, InputOption::VALUE_REQUIRED, 'File name of new configuration file'),
                 ])
             )
         ;
@@ -37,5 +36,8 @@ class CreateConfigCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($input->getOption('file-name')) {
+            $fileName = $input->getOption('file-name');
+        }
     }
 }
