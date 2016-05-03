@@ -74,8 +74,11 @@ class UpdateSource implements ActionInterface
         putenv('COMPOSER_ALLOW_SUPERUSER=1');
         putenv('COMPOSER_DISABLE_XDEBUG_WARN=1');
 
+        $output = new ConsoleOutput();
+        $argv = new ArgvInput(['', 'install', '--classmap-authoritative', '--prefer-source', '--no-dev']);
+
         $composer = new ComposerApplication();
-        $return = $composer->doRun(new ArgvInput(['', 'install']), new ConsoleOutput());
+        $return = $composer->doRun($argv, $output);
 
         chdir($cwd);
 
