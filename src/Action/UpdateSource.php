@@ -15,25 +15,8 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class UpdateSource implements ActionInterface
+class UpdateSource extends AbstractAction
 {
-    /** @var Config */
-    private $config;
-    /** @var Site */
-    private $siteConfig;
-
-    /**
-     * Constructor.
-     *
-     * @param Config $config
-     * @param Site   $siteConfig
-     */
-    public function __construct(Config $config, Site $siteConfig)
-    {
-        $this->config = $config;
-        $this->siteConfig = $siteConfig;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -74,11 +57,10 @@ class UpdateSource implements ActionInterface
         putenv('COMPOSER_ALLOW_SUPERUSER=1');
         putenv('COMPOSER_DISABLE_XDEBUG_WARN=1');
 
-        $output = new ConsoleOutput();
         $argv = new ArgvInput(['', 'install', '--classmap-authoritative', '--prefer-source', '--no-dev']);
 
         $composer = new ComposerApplication();
-        $return = $composer->doRun($argv, $output);
+        $return = $composer->doRun($argv, $this->output);
 
         chdir($cwd);
 

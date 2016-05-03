@@ -14,25 +14,8 @@ use Symfony\Component\Process\Process;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class BackupDatabase implements ActionInterface
+class BackupDatabase extends AbstractAction
 {
-    /** @var Config */
-    protected $config;
-    /** @var Site */
-    protected $siteConfig;
-
-    /**
-     * Constructor.
-     *
-     * @param Config $config
-     * @param Site   $siteConfig
-     */
-    public function __construct(Config $config, Site $siteConfig)
-    {
-        $this->config = $config;
-        $this->siteConfig = $siteConfig;
-    }
-
     /**
      * {@inheritdoc}
      */

@@ -13,25 +13,10 @@ use Symfony\Component\Process\Process;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class SetPermissions implements ActionInterface
+class SetPermissions extends AbstractAction
 {
-    /** @var Config */
-    protected $config;
-    /** @var Site */
-    protected $siteConfig;
     /** @var string */
     protected $logFile;
-
-    /**
-     * Constructor.
-     *
-     * @param Site $siteConfig
-     */
-    public function __construct(Config $config, Site $siteConfig)
-    {
-        $this->config = $config;
-        $this->siteConfig = $siteConfig;
-    }
 
     /**
      * {@inheritdoc}

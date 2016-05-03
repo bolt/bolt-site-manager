@@ -4,7 +4,6 @@ namespace Bolt\Deploy\Command;
 
 use Bolt\Deploy\Action;
 use Bolt\Deploy\Config\Config;
-use Bolt\Deploy\Config\Site;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -44,41 +43,40 @@ class DeployCommand extends BaseCommand
     {
         $config = $this->loadConfiguration($input, $output);
         $siteName = $input->getArgument('name');
-        $siteConfig = $config->getSite($siteName);
 
-        if ($siteConfig === null) {
+        if ($config->getSite($siteName) === null) {
             $output->writeln(sprintf('<error>No configuration for site "%s" found!</error>', $siteName));
             $output->writeln('<error>Exiting.</error>');
             die();
         }
 
         // Update the source from its git repository
-        $this->doUpdateSource($config, $siteConfig, $output);
+        $this->doUpdateSource($siteName, $config, $output);
 
         // If enabled do file backups
-        $this->doBackupFiles($siteConfig, $input, $output);
+        $this->doBackupFiles($siteName, $config, $input, $output);
 
         // If enabled do database backups
-        $this->doBackupDatabase($config, $siteConfig, $input, $output);
+        $this->doBackupDatabase($siteName, $config, $input, $output);
 
         // Update the site target from the source
-        $this->doUpdateTarget($siteConfig, $output);
+        $this->doUpdateTarget($siteName, $config, $output);
 
         // Set/reset permissions
-        $this->doSetPermissions($config, $siteConfig, $output);
+        $this->doSetPermissions($siteName, $config, $output);
     }
 
     /**
+     * @param string          $siteName
      * @param Config          $config
-     * @param Site            $siteConfig
      * @param OutputInterface $output
      */
-    protected function doUpdateSource(Config $config, Site $siteConfig, OutputInterface $output)
+    protected function doUpdateSource($siteName, Config $config, OutputInterface $output)
     {
-        $updateSource = new Action\UpdateSource($config, $siteConfig);
+        $updateSource = new Action\UpdateSource($siteName, $config, $output);
         try {
             $updateSource->execute();
-            $output->writeln(sprintf('<info>Successfully updated git repository.</info>', $siteConfig->getName()));
+            $output->writeln(sprintf('<info>Successfully updated git repository.</info>', $siteName));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to update source repository!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
@@ -87,20 +85,21 @@ class DeployCommand extends BaseCommand
     }
 
     /**
-     * @param Site            $siteConfig
+     * @param string          $siteName
+     * @param Config          $config
      * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected function doBackupFiles(Site $siteConfig, InputInterface $input, OutputInterface $output)
+    protected function doBackupFiles($siteName, Config $config, InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('skip-backup-files') === true) {
             return;
         }
 
-        $backup = new Action\BackupFiles($siteConfig);
+        $backup = new Action\BackupFiles($siteName, $config, $output);
         try {
             $backup->execute();
-            $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteConfig->getName(), $backup->getBackupPath()));
+            $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteName, $backup->getBackupPath()));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to backup site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
@@ -109,21 +108,21 @@ class DeployCommand extends BaseCommand
     }
 
     /**
+     * @param string          $siteName
      * @param Config          $config
-     * @param Site            $siteConfig
      * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected function doBackupDatabase(Config $config, Site $siteConfig, InputInterface $input, OutputInterface $output)
+    protected function doBackupDatabase($siteName, Config $config, InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('skip-backup-database') === true) {
             return;
         }
 
-        $backup = new Action\BackupDatabase($config, $siteConfig);
+        $backup = new Action\BackupDatabase($siteName, $config, $output);
         try {
             $backup->execute();
-            $output->writeln(sprintf('<info>Successfully backed up %s database to %s</info>', $siteConfig->getName(), $backup->getBackupFileName()));
+            $output->writeln(sprintf('<info>Successfully backed up %s database to %s</info>', $siteName, $backup->getBackupFileName()));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to backup site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
@@ -132,15 +131,16 @@ class DeployCommand extends BaseCommand
     }
 
     /**
-     * @param Site            $siteConfig
+     * @param string          $siteName
+     * @param Config          $config
      * @param OutputInterface $output
      */
-    protected function doUpdateTarget(Site $siteConfig, OutputInterface $output)
+    protected function doUpdateTarget($siteName, Config $config, OutputInterface $output)
     {
-        $updateTarget = new Action\UpdateTarget($siteConfig);
+        $updateTarget = new Action\UpdateTarget($siteName, $config, $output);
         try {
             $updateTarget->execute();
-            $output->writeln(sprintf('<info>Successfully synchronised %s with deployment copy.</info>', $siteConfig->getName()));
+            $output->writeln(sprintf('<info>Successfully synchronised %s with deployment copy.</info>', $siteName));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to update site!</error>');
             $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
@@ -149,13 +149,13 @@ class DeployCommand extends BaseCommand
     }
 
     /**
+     * @param string          $siteName
      * @param Config          $config
-     * @param Site            $siteConfig
      * @param OutputInterface $output
      */
-    protected function doSetPermissions(Config $config, Site $siteConfig, OutputInterface $output)
+    protected function doSetPermissions($siteName, Config $config, OutputInterface $output)
     {
-        $setPermissions = new Action\SetPermissions($config, $siteConfig);
+        $setPermissions = new Action\SetPermissions($siteName, $config, $output);
         try {
             $setPermissions->execute();
             $output->writeln('<info>Successfully updated permissions & access control lists.</info>');

@@ -3,9 +3,11 @@
 namespace Bolt\Deploy\Action;
 
 use AFM\Rsync\Rsync;
+use Bolt\Deploy\Config\Config;
 use Bolt\Deploy\Config\Site;
 use Bolt\Deploy\Console\Application;
 use RuntimeException;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -13,35 +15,29 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class BackupFiles implements ActionInterface
+class BackupFiles extends AbstractAction
 {
-    /** @var boolean */
-    protected $enabled;
-    /** @var string */
-    protected $sitePath;
     /** @var string */
     protected $backupPath;
-    /** @var array */
-    protected $excluded;
 
     /**
      * Constructor.
      *
      * @param Site $siteConfig
      */
-    public function __construct(Site $siteConfig)
+    public function __construct($siteName, Config $config, OutputInterface $output)
     {
-        if ($siteConfig->getPath('backup') === '/') {
-            throw new RuntimeException('Stubornly refusing to use / as a backup target.');
+        parent::__construct($siteName, $config, $output);
+
+        if ($this->siteConfig->getPath('backup') === '/') {
+            throw new RuntimeException('Stubbornly refusing to use / as a backup target.');
         }
 
-        $this->enabled = $siteConfig->isBackupFiles();
-        $this->sitePath = $siteConfig->getPath('site');
+        $siteConfig = $this->siteConfig;
         $this->backupPath = $siteConfig->isBackupTimestamp()
             ? sprintf('%s%s/%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName(), Application::$timestamp)
             : sprintf('%s%s/files/', $siteConfig->getPath('backup'), $siteConfig->getName())
         ;
-        $this->excluded = $siteConfig->getBackupExcludeFiles();
     }
 
     /**
@@ -49,7 +45,7 @@ class BackupFiles implements ActionInterface
      */
     public function execute()
     {
-        if (!$this->enabled) {
+        if (!$this->siteConfig->isBackupFiles()) {
             return;
         }
 
@@ -60,10 +56,10 @@ class BackupFiles implements ActionInterface
 
         $rsync = new Rsync();
         $rsync->setArchive(true);
-        $rsync->setExclude($this->excluded);
+        $rsync->setExclude($this->siteConfig->getBackupExcludeFiles());
         $rsync->setFollowSymLinks(true);
 
-        $rsync->sync($this->sitePath, $this->backupPath);
+        $rsync->sync($this->siteConfig->getPath('site'), $this->backupPath);
     }
 
     /**

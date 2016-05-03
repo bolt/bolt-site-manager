@@ -10,24 +10,8 @@ use Bolt\Deploy\Config\Site;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class UpdateTarget implements ActionInterface
+class UpdateTarget extends AbstractAction
 {
-    /** @var string */
-    protected $sourcePath;
-    /** @var string */
-    protected $sitePath;
-
-    /**
-     * Constructor.
-     *
-     * @param Site $siteConfig
-     */
-    public function __construct(Site $siteConfig)
-    {
-        $this->sourcePath = $siteConfig->getPath('source');
-        $this->sitePath = $siteConfig->getPath('site');
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -37,6 +21,6 @@ class UpdateTarget implements ActionInterface
         $rsync->setArchive(true);
         $rsync->setExclude(['.git']);
 
-        $rsync->sync($this->sourcePath, $this->sitePath);
+        $rsync->sync($this->siteConfig->getPath('source'), $this->siteConfig->getPath('site'));
     }
 }
