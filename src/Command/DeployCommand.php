@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class DeployCommand extends BaseCommand
+class DeployCommand extends AbstractCommand
 {
     /**
      * {@inheritdoc}

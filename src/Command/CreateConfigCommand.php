@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-class CreateConfigCommand extends BaseCommand
+class CreateConfigCommand extends AbstractCommand
 {
     /**
      * {@inheritdoc}

@@ -15,7 +15,7 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @author Gawain Lynch <gawain.lynch@gmail.com>
  */
-abstract class BaseCommand extends Command
+abstract class AbstractCommand extends Command
 {
     /**
      * Load configuration files.
