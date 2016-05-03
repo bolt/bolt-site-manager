@@ -27,9 +27,6 @@ $getLoader = function () {
 };
 $getLoader();
 
-use Bolt\Deploy\Console\Application;
-use Bolt\Deploy\Command\DeployCommand;
-
 error_reporting(-1);
 
 if (function_exists('ini_set')) {
@@ -60,8 +57,5 @@ if (function_exists('ini_set')) {
     unset($memoryInBytes, $memoryLimit);
 }
 
-$command = new DeployCommand();
-$application = new Application();
-$application->add($command);
-$application->setDefaultCommand($command->getName());
+$application = new Bolt\Deploy\Console\Application();
 $application->run();

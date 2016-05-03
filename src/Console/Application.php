@@ -5,7 +5,6 @@ namespace Bolt\Deploy\Console;
 use Bolt\Deploy\Command\DeployCommand;
 use Carbon\Carbon;
 use Symfony\Component\Console\Application as BaseApplication;
-use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Deploy command application.
@@ -25,36 +24,9 @@ class Application extends BaseApplication
     {
         parent::__construct($name, self::VERSION);
         self::$timestamp = Carbon::now()->format('Ymd-His');
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getCommandName(InputInterface $input)
-    {
-        return 'site-deploy';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDefaultCommands()
-    {
-        // Keep the core default commands to have the HelpCommand
-        $defaultCommands = parent::getDefaultCommands();
-        $defaultCommands[] = new DeployCommand();
-
-        return $defaultCommands;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDefinition()
-    {
-        $inputDefinition = parent::getDefinition();
-        $inputDefinition->setArguments();
-
-        return $inputDefinition;
+        $this->addCommands([
+            new DeployCommand(),
+        ]);
     }
 }

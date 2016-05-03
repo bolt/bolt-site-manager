@@ -23,7 +23,7 @@ class DeployCommand extends BaseCommand
     protected function configure()
     {
         $this
-            ->setName('site-deploy')
+            ->setName('deploy')
             ->setDescription('Deploy a site')
             ->setDefinition(
                 new InputDefinition([
