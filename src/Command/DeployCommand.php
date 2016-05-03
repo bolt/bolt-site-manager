@@ -50,6 +50,8 @@ class DeployCommand extends AbstractCommand
             die();
         }
 
+        $output->writeln('<comment>Starting deployment process…</comment>');
+
         // Update the source from its git repository
         $this->doUpdateSource($siteName, $config, $output);
 
