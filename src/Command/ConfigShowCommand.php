@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Dumper;
 
 /**
  * Configuration file show command class.
@@ -40,10 +41,8 @@ class ConfigShowCommand extends AbstractCommand
         $output->writeln(sprintf('<comment>Using configuration file %s<comment>', $this->configFile));
         $output->writeln('<comment><comment>');
 
-        if (function_exists('dump')) {
-            dump($config);
-        } else {
-            print_r($config);
-        }
+        $dumper = new Dumper();
+        $yaml = $dumper->dump($config, 6);
+        echo $yaml, "\n";
     }
 }
