@@ -21,7 +21,7 @@ class Application extends BaseApplication
     /**
      * Constructor.
      */
-    public function __construct($name = 'deploy')
+    public function __construct($name = 'site-deploy')
     {
         parent::__construct($name, self::VERSION);
         self::$timestamp = Carbon::now()->format('Ymd-His');
@@ -32,7 +32,7 @@ class Application extends BaseApplication
      */
     protected function getCommandName(InputInterface $input)
     {
-        return 'deploy';
+        return 'site-deploy';
     }
 
     /**

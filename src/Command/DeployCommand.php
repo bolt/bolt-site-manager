@@ -24,12 +24,12 @@ class DeployCommand extends BaseCommand
     protected function configure()
     {
         $this
-            ->setName('deploy')
+            ->setName('site-deploy')
             ->setDescription('Deploy a site')
             ->setDefinition(
                 new InputDefinition([
                     new InputArgument('name', InputArgument::REQUIRED, 'Name of the site to deploy.'),
-                    new InputOption('config', null, InputOption::VALUE_REQUIRED, 'Optional configuration file override. Defaults to ~/.deploy.yml'),
+                    new InputOption('config', null, InputOption::VALUE_REQUIRED, 'Optional configuration file override.'),
                     new InputOption('skip-backup-files', null, InputOption::VALUE_NONE, 'Skip backup of site files.'),
                     new InputOption('skip-backup-database', null, InputOption::VALUE_NONE, 'Skip backup of database.'),
                 ])

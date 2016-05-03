@@ -29,12 +29,12 @@ abstract class BaseCommand extends Command
     {
         if ($input->getOption('config') !== null) {
             $configFile = $input->getOption('config');
-        } elseif (file_exists(getcwd() . '/.deploy.yml')) {
-            $configFile = getcwd() . '/.deploy.yml';
-        } elseif (file_exists('/etc/deploy.yml')) {
-            $configFile = '/etc/deploy.yml';
+        } elseif (file_exists(getcwd() . '/.site-deploy.yml')) {
+            $configFile = getcwd() . '/.site-deploy.yml';
+        } elseif (file_exists('/etc/site-deploy.yml')) {
+            $configFile = '/etc/site-deploy.yml';
         } else {
-            $configFile = getenv('HOME') . '/.deploy.yml';
+            $configFile = getenv('HOME') . '/.site-deploy.yml';
         }
 
         $fs = new Filesystem();

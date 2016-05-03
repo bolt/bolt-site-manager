@@ -14,9 +14,9 @@ Script files for managing Bolt installs
 The configuration file can either be specified with the `--config=filename.yml` 
 option on the command line.
  
-If no option is specified on the command line, `.deploy.yml` will be looked for
-first in the current directory, followed by `/etc/deploy.yml`, and finally 
-`.deploy.yml` in the users home directory.
+If no option is specified on the command line, `.site-deploy.yml` will be looked for
+first in the current directory, followed by `/etc/site-deploy.yml`, and finally 
+`.site-deploy.yml` in the users home directory.
 
 #### Layout
 
@@ -25,6 +25,8 @@ binaries:
     git: /usr/bin/git
     rsync: /usr/bin/rsync
     setfacl: /usr/bin/setfacl
+    mysqldump: /usr/bin/mysqldump
+    pg_dump: /usr/bin/pg_dump
 
 permissions:
     user: nginx
@@ -59,5 +61,5 @@ sites:
 The deployment for `example` can then be triggered by running:
 
 ```
-php deploy.phar example
+php site-deploy.phar example
 ```
