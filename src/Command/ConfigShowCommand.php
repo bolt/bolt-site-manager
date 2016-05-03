@@ -35,5 +35,15 @@ class ConfigShowCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $config = $this->loadConfiguration($input, $output);
+        $output->writeln('<comment><comment>');
+        $output->writeln(sprintf('<comment>Using configuration file %s<comment>', $this->configFile));
+        $output->writeln('<comment><comment>');
+
+        if (function_exists('dump')) {
+            dump($config);
+        } else {
+            print_r($config);
+        }
     }
 }

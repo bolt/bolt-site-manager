@@ -17,6 +17,9 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 abstract class AbstractCommand extends Command
 {
+    /** @var string */
+    protected $configFile;
+    
     /**
      * Load configuration files.
      *
@@ -27,24 +30,24 @@ abstract class AbstractCommand extends Command
      */
     protected function loadConfiguration(InputInterface $input, OutputInterface $output)
     {
-        if ($input->getOption('config') !== null) {
-            $configFile = $input->getOption('config');
+        if ($input->hasOption('config') && $input->getOption('config') !== null) {
+            $this->configFile = $input->getOption('config');
         } elseif (file_exists(getcwd() . '/.site-deploy.yml')) {
-            $configFile = getcwd() . '/.site-deploy.yml';
+            $this->configFile = getcwd() . '/.site-deploy.yml';
         } elseif (file_exists('/etc/site-deploy.yml')) {
-            $configFile = '/etc/site-deploy.yml';
+            $this->configFile = '/etc/site-deploy.yml';
         } else {
-            $configFile = getenv('HOME') . '/.site-deploy.yml';
+            $this->configFile = getenv('HOME') . '/.site-deploy.yml';
         }
 
         $fs = new Filesystem();
-        if (!$fs->exists($configFile)) {
+        if (!$fs->exists($this->configFile)) {
             $output->writeln('<error>Unable to find valid configuration file.</error>');
             die();
         }
 
         try {
-            return new Config($configFile);
+            return new Config($this->configFile);
         } catch (FileLoaderLoadException $e) {
             $output->writeln(sprintf('<error>%s</error>', stripslashes($e->getMessage())));
             die();
