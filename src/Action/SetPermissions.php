@@ -29,7 +29,7 @@ class SetPermissions extends AbstractAction
         $hasGroup = $this->groupExists($output, $this->config->getPermission('group'));
         if ($hasUser && $hasGroup) {
             $chown = sprintf(
-                'chown -R %s:%s %s',
+                'sudo chown -R %s:%s %s',
                 $this->config->getPermission('user'),
                 $this->config->getPermission('group'),
                 $sitePath
@@ -50,8 +50,8 @@ class SetPermissions extends AbstractAction
         }
 
         $setfacl = sprintf('%s %s', implode(' ', $setfacls), $sitePath);
-        $this->runProcess(new Process('setfacl -R ' . $setfacl));
-        $this->runProcess(new Process('setfacl -dR ' . $setfacl));
+        $this->runProcess(new Process('sudo setfacl -R ' . $setfacl));
+        $this->runProcess(new Process('sudo setfacl -dR ' . $setfacl));
 
         if ($this->logFile !== null) {
             throw new \RuntimeException(sprintf('Failed to set permissions, details logged to %s', $this->logFile));
@@ -80,7 +80,7 @@ class SetPermissions extends AbstractAction
 
     /**
      * Check if an operating system group exists.
-     * 
+     *
      * @param OutputInterface $output
      * @param string          $group
      *
