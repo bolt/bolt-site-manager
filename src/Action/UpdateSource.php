@@ -20,8 +20,11 @@ class UpdateSource extends AbstractAction
      */
     public function execute()
     {
+        $composerRoot = $this->siteConfig->getPath('source');
+
         $this->gitPull();
-        $this->composerInstall();
+        $this->composerInstall($composerRoot);
+        $this->composerInstall($composerRoot . '/extensions');
     }
 
     /**
@@ -45,12 +48,14 @@ class UpdateSource extends AbstractAction
     /**
      * Execute a `composer install` in the repository.
      *
-     * @throws \RuntimeException
+     * @param string $composerRoot
+     *
+     * @throws \Exception
      */
-    protected function composerInstall()
+    protected function composerInstall($composerRoot)
     {
         $cwd = getcwd();
-        chdir($this->siteConfig->getPath('source'));
+        chdir($composerRoot);
 
         putenv('COMPOSER_ALLOW_SUPERUSER=1');
         putenv('COMPOSER_DISABLE_XDEBUG_WARN=1');
