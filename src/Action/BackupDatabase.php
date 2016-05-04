@@ -3,7 +3,6 @@
 namespace Bolt\Deploy\Action;
 
 use Bolt\Deploy\Config\Config;
-use Bolt\Deploy\Config\Site;
 use Bolt\Deploy\Console\Application;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;

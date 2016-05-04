@@ -17,7 +17,7 @@ class Application extends BaseApplication
 {
     const VERSION = '1.0.0';
 
-    static $timestamp;
+    public static $timestamp;
 
     /**
      * Constructor.

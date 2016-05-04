@@ -3,12 +3,10 @@
 namespace Bolt\Deploy\Action;
 
 use Bolt\Deploy\Config\Config;
-use Bolt\Deploy\Config\Site;
 use Bolt\Deploy\Util\Git;
 use Composer\Console\Application as ComposerApplication;
 use RuntimeException;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Update source repository action class.

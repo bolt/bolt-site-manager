@@ -2,10 +2,8 @@
 
 namespace Bolt\Deploy\Command;
 
-use Bolt\Deploy\Action;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Dumper;
 
