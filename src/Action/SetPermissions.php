@@ -44,8 +44,8 @@ class SetPermissions extends AbstractAction
         }
 
         $setfacl = sprintf('%s %s', implode(' ', $setfacls), $sitePath);
-        $this->runProcess(new Process('sudo setfacl -R ' . $setfacl));
-        $this->runProcess(new Process('sudo setfacl -dR ' . $setfacl));
+        $this->runProcess(new Process('sudo setfacl -R --no-mask ' . $setfacl));
+        $this->runProcess(new Process('sudo setfacl -dR --no-mask ' . $setfacl));
 
         if ($this->logFile !== null) {
             throw new \RuntimeException(sprintf('Failed to set permissions, details logged to %s', $this->logFile));
