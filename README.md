@@ -51,8 +51,9 @@ sites:
             files:
                 enabled: true
                 exclude:
+                    - app/cache/
+                    - public/files/
                     - vendor
-                    - README.md
             database:
                 enabled: false
                 auth_file: /var/www/sites/example.com/app/config/config.yml

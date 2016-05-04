@@ -88,8 +88,9 @@ class ConfigCreateCommand extends AbstractCommand
                         'files'     => [
                             'enabled' => true,
                             'exclude' => [
+                                'app/cache/',
+                                'public/files/',
                                 'vendor',
-                                'public',
                             ],
                         ],
                         'database' => [
