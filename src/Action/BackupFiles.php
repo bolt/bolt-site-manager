@@ -62,6 +62,10 @@ class BackupFiles extends AbstractAction
 
         $command = $rsync->getCommand($this->siteConfig->getPath('site'), $this->backupPath);
         $this->runProcess(new Process('sudo ' . $command));
+
+        if ($this->logFile !== null) {
+            throw new \RuntimeException(sprintf('Failed to backup files, details logged to %s', $this->logFile));
+        }
     }
 
     /**

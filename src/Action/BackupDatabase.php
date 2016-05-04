@@ -50,6 +50,10 @@ class BackupDatabase extends AbstractAction
             $this->getBackupFileName()
         );
         $this->runCommand($command);
+
+        if ($this->logFile !== null) {
+            throw new \RuntimeException(sprintf('Failed to backup database, details logged to %s', $this->logFile));
+        }
     }
 
     /**
@@ -66,6 +70,10 @@ class BackupDatabase extends AbstractAction
             $this->getBackupFileName()
         );
         $this->runCommand($command);
+
+        if ($this->logFile !== null) {
+            throw new \RuntimeException(sprintf('Failed to backup database, details logged to %s', $this->logFile));
+        }
     }
 
     /**

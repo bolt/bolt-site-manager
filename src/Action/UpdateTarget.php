@@ -24,5 +24,9 @@ class UpdateTarget extends AbstractAction
 
         $command = $rsync->getCommand($this->siteConfig->getPath('source'), $this->siteConfig->getPath('site'));
         $this->runProcess(new Process('sudo ' . $command));
+
+        if ($this->logFile !== null) {
+            throw new \RuntimeException(sprintf('Failed updating target directory, details logged to %s', $this->logFile));
+        }
     }
 }

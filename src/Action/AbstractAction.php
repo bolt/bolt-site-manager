@@ -38,6 +38,14 @@ abstract class AbstractAction implements ActionInterface
     }
 
     /**
+     * @return string
+     */
+    public function getLogFile()
+    {
+        return $this->logFile;
+    }
+
+    /**
      * Check if an operating system user exists.
      *
      * @param OutputInterface $output
