@@ -4,6 +4,7 @@ namespace Bolt\Deploy\Action;
 
 use AFM\Rsync\Rsync;
 use Bolt\Deploy\Config\Site;
+use Symfony\Component\Process\Process;
 
 /**
  * Update site action class.
@@ -21,6 +22,7 @@ class UpdateTarget extends AbstractAction
         $rsync->setArchive(true);
         $rsync->setExclude(['.git']);
 
-        $rsync->sync($this->siteConfig->getPath('source'), $this->siteConfig->getPath('site'));
+        $command = $rsync->getCommand($this->siteConfig->getPath('source'), $this->siteConfig->getPath('site'));
+        $this->runProcess(new Process('sudo ' . $command));
     }
 }

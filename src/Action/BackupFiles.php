@@ -9,6 +9,7 @@ use Bolt\Deploy\Console\Application;
 use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 /**
  * Backup action class.
@@ -59,7 +60,8 @@ class BackupFiles extends AbstractAction
         $rsync->setExclude($this->siteConfig->getBackupExcludeFiles());
         $rsync->setFollowSymLinks(true);
 
-        $rsync->sync($this->siteConfig->getPath('site'), $this->backupPath);
+        $command = $rsync->getCommand($this->siteConfig->getPath('site'), $this->backupPath);
+        $this->runProcess(new Process('sudo ' . $command));
     }
 
     /**
