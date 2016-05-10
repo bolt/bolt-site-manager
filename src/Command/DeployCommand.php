@@ -4,11 +4,13 @@ namespace Bolt\Deploy\Command;
 
 use Bolt\Deploy\Action;
 use Bolt\Deploy\Config\Config;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Deploy command class.
@@ -52,6 +54,9 @@ class DeployCommand extends AbstractCommand
 
         $output->writeln('<comment>Starting deployment process…</comment>');
 
+        // Turn on sudo early
+        $this->doActivateSudo();
+
         // Update the source from its git repository
         $this->doUpdateSource($siteName, $config, $output);
 
@@ -66,6 +71,15 @@ class DeployCommand extends AbstractCommand
 
         // Set/reset permissions
         $this->doSetPermissions($siteName, $config, $output);
+    }
+
+    protected function doActivateSudo()
+    {
+        $process = new Process('sudo id > /dev/null');
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException($process->getErrorOutput());
+        }
     }
 
     /**
