@@ -21,6 +21,7 @@ class UpdateTarget extends AbstractAction
         $rsync = new Rsync();
         $rsync->setArchive(true);
         $rsync->setExclude(['.git']);
+        $rsync->setFollowSymLinks(false);
 
         $command = $rsync->getCommand($this->siteConfig->getPath('source'), $this->siteConfig->getPath('site'));
         $this->runProcess(new Process('sudo ' . $command));
