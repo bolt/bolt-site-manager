@@ -133,6 +133,9 @@ class Compiler
         $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_classmap.php'));
         $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_files.php'));
         $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_real.php'));
+        if (file_exists($this->rootDir . '/vendor/composer/autoload_static.php')) {
+            $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/autoload_static.php'));
+        }
         if (file_exists($this->rootDir . '/vendor/composer/include_paths.php')) {
             $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/include_paths.php'));
         }
