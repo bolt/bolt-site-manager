@@ -44,6 +44,39 @@ class Git
     }
 
     /**
+     * Initialise a git repository.
+     */
+    public function init()
+    {
+        $this->execute('init');
+    }
+
+    /**
+     * Add a file to the git tracker.
+     *
+     * @param string|array $target
+     */
+    public function add($target)
+    {
+        $this->execute(sprintf('add %s', implode(' ', (array) $target)));
+    }
+
+    /**
+     * Commit file(s) to the git repository.
+     *
+     * @param string|array $target
+     * @param string|null  $message
+     */
+    public function commit($target, $message = null)
+    {
+        if ($message === null) {
+            $this->execute(sprintf('commit %s', implode(' ', (array) $target)));
+        } else {
+            $this->execute(sprintf('commit %s -m "%s"', implode(' ', (array) $target), $message));
+        }
+    }
+
+    /**
      * Pull a branch from a remote.
      *
      * @param string $remote
