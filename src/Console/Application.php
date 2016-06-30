@@ -30,6 +30,7 @@ class Application extends BaseApplication
             new Command\ConfigShowCommand(),
             new Command\CreateCommand(),
             new Command\DeployCommand(),
+            new Command\SelfUpdateCommand(),
         ]);
     }
 }

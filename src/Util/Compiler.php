@@ -140,6 +140,10 @@ class Compiler
             $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/include_paths.php'));
         }
         $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/composer/ClassLoader.php'));
+
+        // Extras
+        $this->addFile($phar, new SplFileInfo($this->rootDir . '/vendor/fabpot/php-cs-fixer/Symfony/CS/ToolInfo.php'));
+
         $this->addComparatorBin($phar);
 
         // Stubs
