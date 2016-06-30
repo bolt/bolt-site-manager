@@ -12,6 +12,7 @@
     "require": {
         "albertofem/rsync-lib": "dev-master",
         "composer/composer": "^1.0",
+        "fabpot/php-cs-fixer": "^1.11",
         "nesbot/carbon": "^1.21",
         "symfony/config": "^3.0",
         "symfony/console": "^3.0",
