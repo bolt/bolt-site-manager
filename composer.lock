@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1afecaae38b1b61c31e4b5295951d21f",
-    "content-hash": "84b433bff621963ea8b6ad351d566ae5",
+    "hash": "6ab5e6eae2c6a80787f4a12953265950",
+    "content-hash": "ed6b6c7799e8d92567715c3a9a1909d5",
     "packages": [
         {
             "name": "albertofem/rsync-lib",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/albertofem/rsync-lib.git",
-                "reference": "60eb4f57368d6fe452ad585260a98f36ca8d57ab"
+                "reference": "e43dd23d3724bd56ee67ee80f3f0bd03ad80e5c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/albertofem/rsync-lib/zipball/60eb4f57368d6fe452ad585260a98f36ca8d57ab",
-                "reference": "60eb4f57368d6fe452ad585260a98f36ca8d57ab",
+                "url": "https://api.github.com/repos/albertofem/rsync-lib/zipball/e43dd23d3724bd56ee67ee80f3f0bd03ad80e5c5",
+                "reference": "e43dd23d3724bd56ee67ee80f3f0bd03ad80e5c5",
                 "shasum": ""
             },
             "require": {
@@ -28,6 +28,11 @@
                 "phpunit/phpunit": "~4.1"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "AFM": "src/"
@@ -48,7 +53,7 @@
             "keywords": [
                 "rsync library"
             ],
-            "time": "2015-09-03 20:00:45"
+            "time": "2016-06-30 08:57:21"
         },
         {
             "name": "composer/ca-bundle",

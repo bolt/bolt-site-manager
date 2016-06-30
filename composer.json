@@ -10,7 +10,7 @@
     ],
     "minimum-stability": "beta",
     "require": {
-        "albertofem/rsync-lib": "dev-master",
+        "albertofem/rsync-lib": "1.0.x@dev",
         "composer/composer": "^1.0",
         "fabpot/php-cs-fixer": "^1.11",
         "nesbot/carbon": "^1.21",
