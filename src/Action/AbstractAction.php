@@ -98,7 +98,7 @@ abstract class AbstractAction implements ActionInterface
         }
 
         if ($this->logFile === null) {
-            $this->logFile = tempnam(sys_get_temp_dir(), 'site-deploy-');
+            $this->logFile = tempnam(sys_get_temp_dir(), 'bolt-site-manager-');
         }
 
         file_put_contents($this->logFile, $process->getErrorOutput(), FILE_APPEND);

@@ -14,9 +14,9 @@ Script files for managing Bolt installs
 The configuration file can either be specified with the `--config=filename.yml` 
 option on the command line.
  
-If no option is specified on the command line, `.site-deploy.yml` will be looked for
-first in the current directory, followed by `/etc/site-deploy.yml`, and finally 
-`.site-deploy.yml` in the users home directory.
+If no option is specified on the command line, `.bolt-site-manager.yml` will be looked for
+first in the current directory, followed by `/etc/bolt-site-manager.yml`, and finally 
+`.bolt-site-manager.yml` in the users home directory.
 
 #### Layout
 
@@ -62,5 +62,5 @@ sites:
 The deployment for `example` can then be triggered by running:
 
 ```
-php site-deploy.phar example
+php bolt-site-manager.phar example
 ```

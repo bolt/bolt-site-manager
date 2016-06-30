@@ -11,7 +11,7 @@ use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
 
 /**
- * Compiler class to create site-deploy.phar file(s).
+ * Compiler class to create bolt-site-manager.phar file(s).
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -37,13 +37,13 @@ class Compiler
     }
 
     /**
-     * Compiles site-deploy command into a PHAR file
+     * Compiles bolt-site-manager command into a PHAR file
      *
      * @param string $pharFile The full path to the file to create
      *
      * @throws \RuntimeException
      */
-    public function compile($pharFile = 'site-deploy.phar')
+    public function compile($pharFile = 'bolt-site-manager.phar')
     {
         $fs = new Filesystem();
         if ($fs->exists($pharFile)) {
@@ -53,7 +53,7 @@ class Compiler
         $process = new Process('git log --pretty="%H" -n1 HEAD', $this->rootDir);
         if ($process->run() != 0) {
             throw new \RuntimeException(
-                'Can\'t run git log. You must ensure that compile is run from a site-deploy git repository clone and that git binary is available.'
+                'Can\'t run git log. You must ensure that compile is run from a bolt-site-manager git repository clone and that git binary is available.'
             );
         }
         $this->version = trim($process->getOutput());
@@ -61,7 +61,7 @@ class Compiler
         $process = new Process('git log -n1 --pretty=%ci HEAD', $this->rootDir);
         if ($process->run() != 0) {
             throw new \RuntimeException(
-                'Can\'t run git log. You must ensure that compile is run from a site-deploy git repository clone and that git binary is available.'
+                'Can\'t run git log. You must ensure that compile is run from a bolt-site-manager git repository clone and that git binary is available.'
             );
         }
         $this->versionDate = new \DateTime(trim($process->getOutput()));
@@ -74,7 +74,7 @@ class Compiler
             echo 'No git tags found on repository. Skipping.', "\n";
         }
 
-        $phar = new Phar($pharFile, 0, 'site-deploy.phar');
+        $phar = new Phar($pharFile, 0, 'bolt-site-manager.phar');
         $phar->setSignatureAlgorithm(Phar::SHA1);
 
         // Start buffering Phar write operations, do not modify the Phar object on disk
@@ -196,9 +196,9 @@ class Compiler
      */
     private function addComparatorBin(Phar $phar)
     {
-        $content = file_get_contents($this->rootDir . '/bin/site-deploy');
+        $content = file_get_contents($this->rootDir . '/bin/bolt-site-manager');
         $content = preg_replace('{^#!/usr/bin/env php\s*}', '', $content);
-        $phar->addFromString('bin/site-deploy', $content);
+        $phar->addFromString('bin/bolt-site-manager', $content);
     }
 
     /**
@@ -246,7 +246,7 @@ class Compiler
  * Copyright (c) 2015-2016 Gawain Lynch <gawain.lynch@gmail.com>
  */
 
-Phar::mapPhar('site-deploy.phar');
+Phar::mapPhar('bolt-site-manager.phar');
 
 EOF;
 
@@ -257,7 +257,7 @@ EOF;
         }
 
         return $stub . <<<'EOF'
-require 'phar://site-deploy.phar/bin/site-deploy';
+require 'phar://bolt-site-manager.phar/bin/bolt-site-manager';
 
 __HALT_COMPILER();
 EOF;

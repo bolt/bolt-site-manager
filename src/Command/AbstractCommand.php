@@ -35,12 +35,12 @@ abstract class AbstractCommand extends Command
     {
         if ($input->hasOption('config') && $input->getOption('config') !== null) {
             $this->configFile = $input->getOption('config');
-        } elseif (file_exists(getcwd() . '/.site-deploy.yml')) {
-            $this->configFile = getcwd() . '/.site-deploy.yml';
-        } elseif (file_exists('/etc/site-deploy.yml')) {
-            $this->configFile = '/etc/site-deploy.yml';
+        } elseif (file_exists(getcwd() . '/.bolt-site-manager.yml')) {
+            $this->configFile = getcwd() . '/.bolt-site-manager.yml';
+        } elseif (file_exists('/etc/bolt-site-manager.yml')) {
+            $this->configFile = '/etc/bolt-site-manager.yml';
         } else {
-            $this->configFile = getenv('HOME') . '/.site-deploy.yml';
+            $this->configFile = getenv('HOME') . '/.bolt-site-manager.yml';
         }
 
         $fs = new Filesystem();
