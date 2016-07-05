@@ -137,9 +137,6 @@ class ConfigurationTree implements ConfigurationInterface
                 ->arrayNode('groups')
                     ->prototype('scalar')->end()
                 ->end()
-                ->arrayNode('homedirs')
-                    ->prototype('scalar')->end()
-                ->end()
             ->end()
         ;
 
