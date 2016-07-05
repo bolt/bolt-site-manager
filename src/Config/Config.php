@@ -28,6 +28,16 @@ class Config
      */
     public function __construct($configFileParameter = null)
     {
+        $this->initialise($configFileParameter);
+    }
+
+    /**
+     * Initialise config parameters.
+     *
+     * @param string|null $configFileParameter
+     */
+    public function initialise($configFileParameter = null)
+    {
         $config = [];
         $configFileGlobal = '/etc/bolt-site-manager.yml';
         $configFileHome = getenv('HOME') . '/.bolt-site-manager.yml';
@@ -50,8 +60,8 @@ class Config
             $merge = $this->loadConfiguration($configFileParameter);
             $config = $this->mergeRecursiveDistinct($config, $merge);
         }
-
         $config = $this->processConfiguration($config);
+
         $this->binaries = $config['binaries'];
         foreach ($config['sites'] as $name => $data) {
             $this->sites[$name] = new Site($name, $data);
