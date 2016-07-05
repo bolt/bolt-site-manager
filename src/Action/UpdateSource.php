@@ -60,7 +60,7 @@ class UpdateSource extends AbstractAction
         putenv('COMPOSER_ALLOW_SUPERUSER=1');
         putenv('COMPOSER_DISABLE_XDEBUG_WARN=1');
 
-        $argv = new ArgvInput(['', 'install', '--classmap-authoritative', '--prefer-source', '--no-dev']);
+        $argv = new ArgvInput(['', 'install', '--classmap-authoritative', '--prefer-dist', '--no-dev']);
 
         $composer = new ComposerApplication();
         $return = $composer->doRun($argv, $this->output);
