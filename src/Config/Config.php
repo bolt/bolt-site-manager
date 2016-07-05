@@ -185,6 +185,93 @@ class Config
     }
 
     /**
+     * @return array
+     */
+    public function getDefaultConfig()
+    {
+        $userName = posix_getpwuid(posix_geteuid())['name'];
+
+        return [
+            'binaries' => [
+                'git'       => '/usr/bin/git',
+                'rsync'     => '/usr/bin/rsync',
+                'setfacl'   => '/usr/bin/setfacl',
+                'mysqldump' => '/usr/bin/mysqldump',
+                'pg_dump'   => '/usr/bin/pg_dump',
+            ],
+            'permissions' => [
+                'user'  => $userName,
+                'group' => $userName,
+            ],
+            'acls' => [
+                'users' => [
+                    $userName,
+                ],
+                'homedirs' => null,
+            ],
+            'sites' => [
+            ],
+        ];
+    }
+
+    /**
+     * @param string $siteName
+     *
+     * @return array
+     */
+    public function getDefaultSiteConfig($siteName)
+    {
+        return [
+            $siteName => [
+                'paths' => [
+                    'site'   => null,
+                    'source' => null,
+                    'backup' => null,
+                ],
+                'backup' => [
+                    'timestamp' => false,
+                    'files'     => [
+                        'enabled' => false,
+                        'exclude' => [
+                        ],
+                        'database' => [
+                            'enabled'   => false,
+                            'auth_file' => null,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array $array1
+     * @param array $array2
+     *
+     * @return array
+     */
+    public function mergeRecursiveDistinct(array &$array1, array &$array2)
+    {
+        $merged = $array1;
+
+        foreach ($array2 as $key => &$value) {
+            // if $key = 'accept_file_types, don't merge.
+            if ($key == 'accept_file_types') {
+                $merged[$key] = $array2[$key];
+                continue;
+            }
+
+            if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
+                $merged[$key] = static::mergeRecursiveDistinct($merged[$key], $value);
+            } else {
+                $merged[$key] = $value;
+            }
+        }
+
+        return $merged;
+    }
+
+    /**
      * Load and validate configuration.
      *
      * @param $configFile
