@@ -37,18 +37,21 @@ class Config
         if ($fs->exists($configFileGlobal)) {
             $merge = $this->loadConfiguration($configFileGlobal);
             $config = $this->mergeRecursiveDistinct($config, $merge);
-        } elseif ($fs->exists($configFileHome)) {
+        }
+        if ($fs->exists($configFileHome)) {
             $merge = $this->loadConfiguration($configFileHome);
             $config = $this->mergeRecursiveDistinct($config, $merge);
-        } elseif ($fs->exists($configFileLocal)) {
+        }
+        if ($fs->exists($configFileLocal)) {
             $merge = $this->loadConfiguration($configFileLocal);
             $config = $this->mergeRecursiveDistinct($config, $merge);
-        } elseif ($configFileParameter === null && fileExists($configFileParameter)) {
+        }
+        if ($configFileParameter === null && $fs->exists($configFileParameter)) {
             $merge = $this->loadConfiguration($configFileParameter);
             $config = $this->mergeRecursiveDistinct($config, $merge);
         }
-        $config = $this->processConfiguration($config);
 
+        $config = $this->processConfiguration($config);
         $this->binaries = $config['binaries'];
         foreach ($config['sites'] as $name => $data) {
             $this->sites[$name] = new Site($name, $data);
@@ -258,11 +261,11 @@ class Config
                         'exclude' => [
                             'vendor',
                         ],
-                        'database' => [
-                            'enabled'   => false,
-                            'auth_file' => null,
-                        ],
                     ],
+                ],
+                'database' => [
+                    'enabled'   => false,
+                    'auth_file' => null,
                 ],
             ],
         ];
