@@ -210,6 +210,7 @@ class Config
     public function getDefaultConfig()
     {
         $userName = posix_getpwuid(posix_geteuid())['name'];
+        $groupName = posix_getgrgid(posix_geteuid())['name'];
 
         return [
             'binaries' => [
@@ -228,9 +229,8 @@ class Config
                     $userName,
                 ],
                 'groups' => [
-                    $userName,
+                    $groupName,
                 ],
-                'homedirs' => null,
             ],
             'sites' => [
             ],
