@@ -46,19 +46,19 @@ class Config
         $fs = new Filesystem();
         if ($fs->exists($configFileGlobal)) {
             $merge = $this->loadConfiguration($configFileGlobal);
-            $config = $this->mergeRecursiveDistinct($config, $merge);
+            $config = static::mergeRecursiveDistinct($config, $merge);
         }
         if ($fs->exists($configFileHome)) {
             $merge = $this->loadConfiguration($configFileHome);
-            $config = $this->mergeRecursiveDistinct($config, $merge);
+            $config = static::mergeRecursiveDistinct($config, $merge);
         }
         if ($fs->exists($configFileLocal)) {
             $merge = $this->loadConfiguration($configFileLocal);
-            $config = $this->mergeRecursiveDistinct($config, $merge);
+            $config = static::mergeRecursiveDistinct($config, $merge);
         }
         if ($configFileParameter === null && $fs->exists($configFileParameter)) {
             $merge = $this->loadConfiguration($configFileParameter);
-            $config = $this->mergeRecursiveDistinct($config, $merge);
+            $config = static::mergeRecursiveDistinct($config, $merge);
         }
         $config = $this->processConfiguration($config);
 
@@ -287,25 +287,39 @@ class Config
      *
      * @return array
      */
-    public function mergeRecursiveDistinct(array &$array1, array &$array2)
+    public static function mergeRecursiveDistinct(array &$array1, array &$array2)
     {
         $merged = $array1;
 
         foreach ($array2 as $key => &$value) {
-            // if $key = 'accept_file_types, don't merge.
-            if ($key == 'accept_file_types') {
-                $merged[$key] = $array2[$key];
-                continue;
-            }
-
             if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
-                $merged[$key] = static::mergeRecursiveDistinct($merged[$key], $value);
+                if (static::isIndexedArray($value)) {
+                    $merged[$key] = array_merge($merged[$key], $value);
+                } else {
+                    $merged[$key] = static::mergeRecursiveDistinct($merged[$key], $value);
+                }
             } else {
                 $merged[$key] = $value;
             }
         }
 
         return $merged;
+    }
+
+    /**
+     * @param array $arr
+     *
+     * @return bool
+     */
+    public static function isIndexedArray(array $arr)
+    {
+        foreach ($arr as $key => $val) {
+            if ($key !== (int) $key) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
