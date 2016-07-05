@@ -54,8 +54,8 @@ class CreateProject extends AbstractAction
     {
         $this->composerCreateProject();
         $this->updateGitIgnore();
-        $this->gitSetup();
         $this->configSetup();
+        $this->gitSetup();
     }
 
     /**
@@ -140,7 +140,7 @@ class CreateProject extends AbstractAction
             throw new RuntimeException(sprintf('No git repository found at %s', $this->siteDir));
         }
 
-        $siteConfig = $this->config->getSite('local');
+        $siteConfig = $this->config->getSite($this->siteName);
         $paths = $siteConfig->getPaths();
         $paths['source'] = $this->siteDir;
         $siteConfig->setPaths($paths);
@@ -155,9 +155,10 @@ class CreateProject extends AbstractAction
      */
     protected function configSetup()
     {
-        //$defaults = $this->config->getDefaultConfig();
+        $defaults = $this->config->getDefaultConfig();
         $defaults['sites'] = $this->config->getDefaultSiteConfig(basename($this->siteDir));
         $yamlFileName = sprintf('%s/.bolt-site-manager.yml', $this->siteDir);
         file_put_contents($yamlFileName, Yaml::dump($defaults, 6, 4, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
+        $this->config->initialise();
     }
 }

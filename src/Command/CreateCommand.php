@@ -53,8 +53,11 @@ class CreateCommand extends AbstractCommand
         $siteName = basename($siteDir);
         $updateSource = new Action\CreateProject($siteName, $config, $output);
         try {
-            $updateSource->setSiteDir($siteDir);
-            $updateSource->execute();
+            $updateSource
+                ->setSiteName(basename($siteDir))
+                ->setSiteDir($siteDir)
+                ->execute()
+            ;
             $output->writeln(sprintf('<info>Successfully created Composer project.</info>', $siteName));
         } catch (\Exception $e) {
             $output->writeln('<error>Failed to create Composer project!</error>');
