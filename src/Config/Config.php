@@ -207,6 +207,9 @@ class Config
                 'users' => [
                     $userName,
                 ],
+                'groups' => [
+                    $userName,
+                ],
                 'homedirs' => null,
             ],
             'sites' => [
