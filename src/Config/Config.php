@@ -236,6 +236,7 @@ class Config
                     'files'     => [
                         'enabled' => false,
                         'exclude' => [
+                            'vendor',
                         ],
                         'database' => [
                             'enabled'   => false,
