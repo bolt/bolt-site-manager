@@ -8,6 +8,7 @@ use Symfony\Component\Config\Exception\FileLoaderLoadException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\DelegatingLoader;
 use Symfony\Component\Config\Loader\LoaderResolver;
+use Symfony\Component\Filesystem\Filesystem;
 
 class Config
 {
@@ -23,11 +24,30 @@ class Config
     /**
      * Constructor.
      *
-     * @param string|array $configFile
+     * @param string|array $configFileParameter
      */
-    public function __construct($configFile)
+    public function __construct($configFileParameter = null)
     {
-        $config = $this->loadConfiguration($configFile);
+        $config = [];
+        $configFileGlobal = '/etc/bolt-site-manager.yml';
+        $configFileHome = getenv('HOME') . '/.bolt-site-manager.yml';
+        $configFileLocal = getcwd() . '/.bolt-site-manager.yml';
+
+        $fs = new Filesystem();
+        if ($fs->exists($configFileGlobal)) {
+            $merge = $this->loadConfiguration($configFileGlobal);
+            $config = $this->mergeRecursiveDistinct($config, $merge);
+        } elseif ($fs->exists($configFileHome)) {
+            $merge = $this->loadConfiguration($configFileHome);
+            $config = $this->mergeRecursiveDistinct($config, $merge);
+        } elseif ($fs->exists($configFileLocal)) {
+            $merge = $this->loadConfiguration($configFileLocal);
+            $config = $this->mergeRecursiveDistinct($config, $merge);
+        } elseif ($configFileParameter === null && fileExists($configFileParameter)) {
+            $merge = $this->loadConfiguration($configFileParameter);
+            $config = $this->mergeRecursiveDistinct($config, $merge);
+        }
+        $config = $this->processConfiguration($config);
 
         $this->binaries = $config['binaries'];
         foreach ($config['sites'] as $name => $data) {
@@ -296,12 +316,20 @@ class Config
         $loaderResolver = new LoaderResolver($loaders);
         $delegatingLoader = new DelegatingLoader($loaderResolver);
 
-        $configuration = new ConfigurationTree();
-        $processor = new Processor();
-
-        $config = [
+        return [
             'root' => $delegatingLoader->load($configFile),
         ];
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return array
+     */
+    protected function processConfiguration(array $config)
+    {
+        $configuration = new ConfigurationTree();
+        $processor = new Processor();
 
         return $processor->processConfiguration(
             $configuration,

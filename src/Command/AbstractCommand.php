@@ -22,7 +22,7 @@ abstract class AbstractCommand extends Command
 {
     /** @var string */
     protected $configFile;
-    
+
     /**
      * Load configuration files.
      *
@@ -33,8 +33,9 @@ abstract class AbstractCommand extends Command
      */
     protected function loadConfiguration(InputInterface $input, OutputInterface $output)
     {
+        $configFileParameter = null;
         if ($input->hasOption('config') && $input->getOption('config') !== null) {
-            $this->configFile = $input->getOption('config');
+            $this->configFile = $configFileParameter = $input->getOption('config');
         } elseif (file_exists(getcwd() . '/.bolt-site-manager.yml')) {
             $this->configFile = getcwd() . '/.bolt-site-manager.yml';
         } elseif (file_exists('/etc/bolt-site-manager.yml')) {
@@ -50,7 +51,7 @@ abstract class AbstractCommand extends Command
         }
 
         try {
-            return new Config($this->configFile);
+            return new Config($configFileParameter);
         } catch (FileLoaderLoadException $e) {
             $output->writeln(sprintf('<error>%s</error>', stripslashes($e->getMessage())));
             die();

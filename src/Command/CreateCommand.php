@@ -38,8 +38,7 @@ class CreateCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $config = $this->loadConfiguration($input, $output);
-        $siteDir = $input->getArgument('dir');
-
+        $siteDir = $input->getArgument('dir') === '.' ? getcwd() : $input->getOption('dir');
         $output->writeln('<comment>Starting creation process…</comment>');
 
         // Turn on sudo early
