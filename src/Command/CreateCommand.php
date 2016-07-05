@@ -46,10 +46,10 @@ class CreateCommand extends AbstractCommand
         $this->doActivateSudo();
 
         // Create the Composer project
-        $this->doCrerateProject($siteDir, $config, $output);
+        $this->doCreateProject($siteDir, $config, $output);
     }
 
-    protected function doCrerateProject($siteDir, Config $config, OutputInterface $output)
+    protected function doCreateProject($siteDir, Config $config, OutputInterface $output)
     {
         $siteName = basename($siteDir);
         $updateSource = new Action\CreateProject($siteName, $config, $output);
