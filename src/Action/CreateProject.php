@@ -95,6 +95,8 @@ class CreateProject extends AbstractAction
             'public/thumbs',
             'vendor/',
             '.htaccess',
+            'bolt-site-manager.yml',
+            '.bolt-site-manager.yml',
             '# Misc developer tools',
             'bower_components',
             'node_modules',
