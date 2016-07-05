@@ -158,7 +158,6 @@ class ConfigurationTree implements ConfigurationInterface
         };
 
         $node
-            ->isRequired()
             ->requiresAtLeastOneElement()
             ->useAttributeAsKey('name')
             ->prototype('array')
