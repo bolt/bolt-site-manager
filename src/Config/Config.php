@@ -272,10 +272,10 @@ class Config
                             'vendor',
                         ],
                     ],
-                ],
-                'database' => [
-                    'enabled'   => false,
-                    'auth_file' => null,
+                    'database' => [
+                        'enabled'   => false,
+                        'auth_file' => null,
+                    ],
                 ],
             ],
         ];
