@@ -9,6 +9,7 @@ use Composer\Console\Application as ComposerApplication;
 use RuntimeException;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Create Composer project action class.
@@ -18,7 +19,21 @@ use Symfony\Component\Filesystem\Filesystem;
 class CreateProject extends AbstractAction
 {
     /** @var string */
+    protected $siteName;
+    /** @var string */
     protected $siteDir;
+
+    /**
+     * @param string $siteName
+     *
+     * @return CreateProject
+     */
+    public function setSiteName($siteName)
+    {
+        $this->siteName = $siteName;
+
+        return $this;
+    }
 
     /**
      * @param string $siteDir
@@ -40,6 +55,7 @@ class CreateProject extends AbstractAction
         $this->composerCreateProject();
         $this->updateGitIgnore();
         $this->gitSetup();
+        $this->configSetup();
     }
 
     /**
@@ -132,5 +148,16 @@ class CreateProject extends AbstractAction
         $git->init();
         $git->add('.');
         $git->commit('.', 'Intial Bolt project installation');
+    }
+
+    /**
+     * Dump a usable YAML file default in the project.
+     */
+    protected function configSetup()
+    {
+        //$defaults = $this->config->getDefaultConfig();
+        $defaults['sites'] = $this->config->getDefaultSiteConfig(basename($this->siteDir));
+        $yamlFileName = sprintf('%s/.bolt-site-manager.yml', $this->siteDir);
+        file_put_contents($yamlFileName, Yaml::dump($defaults, 6, 4, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK));
     }
 }
