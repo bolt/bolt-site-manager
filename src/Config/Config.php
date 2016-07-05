@@ -148,6 +148,17 @@ class Config
      */
     public function getAcl($type)
     {
+        if ($type === 'homedirs') {
+            if (empty($this->acls['homedirs'])) {
+                $default = getenv('HOME') ? [dirname(getenv('HOME'))] : null;
+                $default[] = '/home';
+
+                return $this->acls['homedirs'] = array_unique($default);
+            }
+
+            return $this->acls['homedirs'];
+        }
+
         return $this->acls[$type];
     }
 
@@ -156,6 +167,8 @@ class Config
      */
     public function getAcls()
     {
+        $this->acls['homedirs'] = $this->getAcl('homedirs');
+
         return $this->acls;
     }
 
@@ -173,7 +186,7 @@ class Config
 
     /**
      * Load and validate configuration.
-     * 
+     *
      * @param $configFile
      *
      * @throws FileLoaderLoadException
