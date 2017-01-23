@@ -1,0 +1,67 @@
+{
+    "alias": "bolt-site-manager",
+    "chmod": "0755",
+    "compactors": [
+        "Herrera\\Box\\Compactor\\Json",
+        "Herrera\\Box\\Compactor\\Php"
+    ],
+    "compression": "GZ",
+    "directories": [
+        "src"
+    ],
+    "files": [
+        "LICENSE",
+        "vendor/autoload.php",
+        "vendor/composer/composer/res/composer-schema.json",
+        "vendor/fabpot/php-cs-fixer/Symfony/CS/ToolInfo.php",
+        "vendor/composer/autoload_namespaces.php",
+        "vendor/composer/autoload_psr4.php",
+        "vendor/composer/autoload_classmap.php",
+        "vendor/composer/autoload_files.php",
+        "vendor/composer/autoload_real.php",
+        "vendor/composer/ClassLoader.php"
+    ],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": [
+                ".gitignore",
+                ".md",
+                "docs",
+                "phpunit",
+                "Tester",
+                "Tests",
+                "tests",
+                "yaml"
+            ],
+            "in": [
+                "vendor/albertofem/rsync-lib/src",
+                "vendor/composer/ca-bundle/src",
+                "vendor/composer/composer",
+                "vendor/composer/semver/src",
+                "vendor/nesbot/carbon/src",
+                "vendor/justinrainbow/json-schema/src",
+                "vendor/psr/log",
+                "vendor/seld/jsonlint/src",
+                "vendor/symfony"
+            ]
+        },
+        {
+            "name": "autoload_static.php",
+            "in": [
+                "vendor/composer"
+            ]
+        },
+        {
+            "name": "include_paths.php",
+            "in": [
+                "vendor/composer"
+            ]
+        }
+    ],
+    "git-version": "package_version",
+    "main": "bin\/bolt-site-manager",
+    "output": "bolt-site-manager.phar",
+    "stub": true,
+    "web": false
+}
