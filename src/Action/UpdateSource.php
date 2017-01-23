@@ -37,6 +37,7 @@ class UpdateSource extends AbstractAction
      */
     protected function getRemoteUpdate()
     {
+        $this->assertGitRepo();
         $this->git->remote('update');
     }
 
@@ -49,6 +50,8 @@ class UpdateSource extends AbstractAction
         if ($this->input->hasOption('branch')) {
             $branch = $this->input->getOption('branch');
         }
+
+        $this->assertGitRepo();
         $this->git->checkout($branch);
     }
 
@@ -59,13 +62,8 @@ class UpdateSource extends AbstractAction
      */
     protected function gitPull()
     {
-        if (!file_exists($this->siteConfig->getPath('source') . '.git')) {
-            throw new RuntimeException(sprintf('No git repository found at %s', $this->siteConfig->getPath('source')));
-        }
-
-        if (!$this->git->isWorkingCopyClean()) {
-            throw new RuntimeException(sprintf('The git repository has uncommitted changes!', $this->siteConfig->getPath('source')));
-        }
+        $this->assertGitRepo();
+        $this->assertGitRepoClean();
         $this->git->pull();
     }
 
@@ -93,6 +91,26 @@ class UpdateSource extends AbstractAction
 
         if ($return !== 0) {
             throw new \RuntimeException('Composer install did not complete.');
+        }
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    protected function assertGitRepo()
+    {
+        if (!file_exists($this->siteConfig->getPath('source') . '.git')) {
+            throw new RuntimeException(sprintf('No git repository found at %s', $this->siteConfig->getPath('source')));
+        }
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    protected function assertGitRepoClean()
+    {
+        if (!$this->git->isWorkingCopyClean()) {
+            throw new RuntimeException(sprintf('The git repository has uncommitted changes!', $this->siteConfig->getPath('source')));
         }
     }
 }
