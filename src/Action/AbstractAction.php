@@ -4,6 +4,7 @@ namespace Bolt\Deploy\Action;
 
 use Bolt\Deploy\Config\Config;
 use Bolt\Deploy\Config\Site;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
@@ -18,6 +19,8 @@ abstract class AbstractAction implements ActionInterface
     protected $config;
     /** @var Site */
     protected $siteConfig;
+    /** @var InputInterface */
+    protected $input;
     /** @var OutputInterface */
     protected $output;
     /** @var string */
@@ -28,12 +31,14 @@ abstract class AbstractAction implements ActionInterface
      *
      * @param string          $siteName
      * @param Config          $config
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    public function __construct($siteName, Config $config, OutputInterface $output)
+    public function __construct($siteName, Config $config, InputInterface $input, OutputInterface $output)
     {
         $this->config = $config;
         $this->siteConfig = $config->getSite($siteName);
+        $this->input = $input;
         $this->output = $output;
     }
 

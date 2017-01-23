@@ -2,7 +2,6 @@
 
 namespace Bolt\Deploy\Action;
 
-use Bolt\Deploy\Config\Config;
 use Bolt\Deploy\Util\Git;
 use Composer\Console\Application as ComposerApplication;
 use RuntimeException;
@@ -23,9 +22,11 @@ class UpdateSource extends AbstractAction
      */
     public function execute()
     {
-        $this->git = new Git($this->config, $this->siteConfig);        $composerRoot = $this->siteConfig->getPath('source');
+        $this->git = new Git($this->config, $this->siteConfig);
+        $composerRoot = $this->siteConfig->getPath('source');
 
         $this->getRemoteUpdate();
+        $this->getCheckoutBranch();
         $this->gitPull();
         $this->composerInstall($composerRoot);
         $this->composerInstall($composerRoot . '/extensions');
@@ -37,6 +38,18 @@ class UpdateSource extends AbstractAction
     protected function getRemoteUpdate()
     {
         $this->git->remote('update');
+    }
+
+    /**
+     * Checkout the requested branch, or default to master.
+     */
+    protected function getCheckoutBranch()
+    {
+        $branch = 'master';
+        if ($this->input->hasOption('branch')) {
+            $branch = $this->input->getOption('branch');
+        }
+        $this->git->checkout($branch);
     }
 
     /**

@@ -29,6 +29,7 @@ class DeployCommand extends AbstractCommand
                 new InputDefinition([
                     new InputArgument('name', InputArgument::REQUIRED, 'Name of the site to deploy.'),
                     new InputOption('config', null, InputOption::VALUE_REQUIRED, 'Optional configuration file override.'),
+                    new InputOption('branch', null, InputOption::VALUE_REQUIRED, 'Optional git branch name.', 'master'),
                     new InputOption('skip-backup-files', null, InputOption::VALUE_NONE, 'Skip backup of site files.'),
                     new InputOption('skip-backup-database', null, InputOption::VALUE_NONE, 'Skip backup of database.'),
                 ])
@@ -56,7 +57,7 @@ class DeployCommand extends AbstractCommand
         $this->doActivateSudo();
 
         // Update the source from its git repository
-        $this->doUpdateSource($siteName, $config, $output);
+        $this->doUpdateSource($siteName, $config, $input, $output);
 
         // If enabled do file backups
         $this->doBackupFiles($siteName, $config, $input, $output);
@@ -65,9 +66,9 @@ class DeployCommand extends AbstractCommand
         $this->doBackupDatabase($siteName, $config, $input, $output);
 
         // Update the site target from the source
-        $this->doUpdateTarget($siteName, $config, $output);
+        $this->doUpdateTarget($siteName, $config, $input, $output);
 
         // Set/reset permissions
-        $this->doSetPermissions($siteName, $config, $output);
+        $this->doSetPermissions($siteName, $config, $input, $output);
     }
 }

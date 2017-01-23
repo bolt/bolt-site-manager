@@ -73,11 +73,12 @@ abstract class AbstractCommand extends Command
     /**
      * @param string          $siteName
      * @param Config          $config
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected function doUpdateSource($siteName, Config $config, OutputInterface $output)
+    protected function doUpdateSource($siteName, Config $config, InputInterface $input, OutputInterface $output)
     {
-        $updateSource = new Action\UpdateSource($siteName, $config, $output);
+        $updateSource = new Action\UpdateSource($siteName, $config, $input, $output);
         try {
             $updateSource->execute();
             $output->writeln(sprintf('<info>Successfully updated git repository.</info>', $siteName));
@@ -100,7 +101,7 @@ abstract class AbstractCommand extends Command
             return;
         }
 
-        $backup = new Action\BackupFiles($siteName, $config, $output);
+        $backup = new Action\BackupFiles($siteName, $config, $input, $output);
         try {
             $backup->execute();
             $output->writeln(sprintf('<info>Successfully backed up %s to %s</info>', $siteName, $backup->getBackupPath()));
@@ -123,7 +124,7 @@ abstract class AbstractCommand extends Command
             return;
         }
 
-        $backup = new Action\BackupDatabase($siteName, $config, $output);
+        $backup = new Action\BackupDatabase($siteName, $config, $input, $output);
         try {
             $backup->execute();
             $output->writeln(sprintf('<info>Successfully backed up %s database to %s</info>', $siteName, $backup->getBackupFileName()));
@@ -137,11 +138,12 @@ abstract class AbstractCommand extends Command
     /**
      * @param string          $siteName
      * @param Config          $config
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected function doUpdateTarget($siteName, Config $config, OutputInterface $output)
+    protected function doUpdateTarget($siteName, Config $config, InputInterface $input, OutputInterface $output)
     {
-        $updateTarget = new Action\UpdateTarget($siteName, $config, $output);
+        $updateTarget = new Action\UpdateTarget($siteName, $config, $input, $output);
         try {
             $updateTarget->execute();
             $output->writeln(sprintf('<info>Successfully synchronised %s with deployment copy.</info>', $siteName));
@@ -155,11 +157,12 @@ abstract class AbstractCommand extends Command
     /**
      * @param string          $siteName
      * @param Config          $config
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
-    protected function doSetPermissions($siteName, Config $config, OutputInterface $output)
+    protected function doSetPermissions($siteName, Config $config, InputInterface $input, OutputInterface $output)
     {
-        $setPermissions = new Action\SetPermissions($siteName, $config, $output);
+        $setPermissions = new Action\SetPermissions($siteName, $config, $input, $output);
         try {
             $setPermissions->execute();
             $output->writeln('<info>Successfully updated permissions & access control lists.</info>');

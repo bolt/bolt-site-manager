@@ -7,6 +7,7 @@ use Bolt\Deploy\Config\Config;
 use Bolt\Deploy\Config\Site;
 use Bolt\Deploy\Console\Application;
 use RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -24,11 +25,14 @@ class BackupFiles extends AbstractAction
     /**
      * Constructor.
      *
-     * @param Site $siteConfig
+     * @param string          $siteName
+     * @param Config          $config
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      */
-    public function __construct($siteName, Config $config, OutputInterface $output)
+    public function __construct($siteName, Config $config, InputInterface $input, OutputInterface $output)
     {
-        parent::__construct($siteName, $config, $output);
+        parent::__construct($siteName, $config, $input, $output);
 
         if ($this->siteConfig->getPath('backup') === '/') {
             throw new RuntimeException('Stubbornly refusing to use / as a backup target.');
