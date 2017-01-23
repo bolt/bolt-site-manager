@@ -15,16 +15,28 @@ use Symfony\Component\Console\Input\ArgvInput;
  */
 class UpdateSource extends AbstractAction
 {
+    /** @var Git */
+    protected $git;
+
     /**
      * {@inheritdoc}
      */
     public function execute()
     {
-        $composerRoot = $this->siteConfig->getPath('source');
+        $this->git = new Git($this->config, $this->siteConfig);        $composerRoot = $this->siteConfig->getPath('source');
 
+        $this->getRemoteUpdate();
         $this->gitPull();
         $this->composerInstall($composerRoot);
         $this->composerInstall($composerRoot . '/extensions');
+    }
+
+    /**
+     * Update the local git database with all it's remotes data.
+     */
+    protected function getRemoteUpdate()
+    {
+        $this->git->remote('update');
     }
 
     /**
@@ -38,11 +50,10 @@ class UpdateSource extends AbstractAction
             throw new RuntimeException(sprintf('No git repository found at %s', $this->siteConfig->getPath('source')));
         }
 
-        $git = new Git($this->config, $this->siteConfig);
-        if (!$git->isWorkingCopyClean()) {
+        if (!$this->git->isWorkingCopyClean()) {
             throw new RuntimeException(sprintf('The git repository has uncommitted changes!', $this->siteConfig->getPath('source')));
         }
-        $git->pull();
+        $this->git->pull();
     }
 
     /**

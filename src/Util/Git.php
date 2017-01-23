@@ -88,6 +88,17 @@ class Git
     }
 
     /**
+     * Perform an action on remote(s).
+     *
+     * @param string $action
+     * @param array  $options
+     */
+    public function remote($action, $options = [])
+    {
+        $this->execute(sprintf('remote %s %s', $action, implode(' ', $options)));
+    }
+
+    /**
      * @param string $revision
      */
     public function checkout($revision)
