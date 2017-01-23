@@ -32,7 +32,7 @@ class SelfUpdateCommand extends Command
     {
         $this
             ->setName('self-update')
-            ->setAliases(array('selfupdate'))
+            ->setAliases(['selfupdate'])
             ->setDescription('Update bolt-site-manager.phar to the latest version.')
             ->setHelp(<<<EOT
 The <info>%command.name%</info> command replace your bolt-site-manager.phar by the
@@ -73,7 +73,7 @@ EOT
 
         $remoteFilename = $this->buildVersionFileUrl($major, $minor, $patch);
         $localFilename = $_SERVER['argv'][0];
-        $tempFilename = basename($localFilename, '.phar').'-tmp.phar';
+        $tempFilename = basename($localFilename, '.phar') . '-tmp.phar';
 
         if (false === @file_get_contents($remoteFilename)) {
             $output->writeln('<error>Unable to download new versions from the server.</error>');
@@ -129,7 +129,7 @@ EOT
             return $this->findBestVersion($major + 1, 0, 0);
         }
 
-        return array($major, $minor, $patch);
+        return [$major, $minor, $patch];
     }
 
     private function buildVersionFileUrl($major, $minor, $patch)

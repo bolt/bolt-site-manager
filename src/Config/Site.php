@@ -67,7 +67,6 @@ class Site
         return rtrim($this->paths[$path], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
-
     /**
      * @param string $path
      *

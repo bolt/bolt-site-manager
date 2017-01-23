@@ -82,7 +82,7 @@ class CreateProject extends AbstractAction
             'bolt/composer-install:^3.0',
             $this->siteDir,
             '--no-interaction',
-            '--prefer-dist'
+            '--prefer-dist',
         ]);
 
         $composer = new ComposerApplication();
@@ -126,7 +126,7 @@ class CreateProject extends AbstractAction
             '.DS_Store',
         ];
         $fs = new Filesystem();
-        $gitIgnoreFile = $this->siteDir. '/.gitignore';
+        $gitIgnoreFile = $this->siteDir . '/.gitignore';
         $fs->dumpFile($gitIgnoreFile, implode("\n", $gitIgnore));
     }
 
